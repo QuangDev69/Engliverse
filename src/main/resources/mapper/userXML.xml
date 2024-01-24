@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="learn.mapper.UserMapper">
+
+    <resultMap id="userResultMap" type="User">
+        <id column="ID" property="id" />
+        <result column="USERNAME" property="username" />
+        <result column="EMAIL" property="email" />
+        <result column="PASSWORD" property="password" />
+        <result column="BIRTHDAY" property="birthday" />
+        <result column="ADDRESS" property="address" />
+        <result column="PHONE" property="phone" />
+        <result column="SEX" property="sex" />
+    </resultMap>
+
+    <select id="selectById" resultMap="userResultMap">
+        SELECT * FROM USER WHERE ID = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="userResultMap">
+        SELECT * FROM USER
+    </select>
+
+    <insert id="insert">
+        INSERT INTO USER (USERNAME, EMAIL, PASSWORD, BIRTHDAY, ADDRESS, PHONE, SEX)
+        VALUES (#{username}, #{email}, #{password}, #{birthday}, #{address}, #{phone}, #{sex})
+    </insert>
+
+    <update id="update">
+        UPDATE USER
+        SET USERNAME = #{username},
+            EMAIL = #{email},
+            PASSWORD = #{password},
+            BIRTHDAY = #{birthday},
+            ADDRESS = #{address},
+            PHONE = #{phone},
+            SEX = #{sex}
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM USER WHERE ID = #{id}
+    </delete>
+
+</mapper>
