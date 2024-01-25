@@ -1,16 +1,56 @@
 package learn.model;
 
 import java.sql.Date;
+import java.util.Collection;
+import java.util.Collections;
 
-public class User {
-	private Integer id;
-    private String username;
-    private String email;
-    private String password;
-    private Date birthday;
-    private String address;
-    private String phone;
-    private String sex;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+public class User implements UserDetails {
+	   private static final long serialVersionUID = 1L;
+
+	    private Integer id;
+	    private String username;
+	    private String email;
+	    private String password;
+	    private Date birthday;
+	    private String address;
+	    private String phone;
+	    private String sex;
+	    private boolean enabled;
+
+	    public User(String username, String password, String email) {
+	        this.username = username;
+	        this.password = password;
+	        this.email = email;
+
+	    }
+	    @Override
+	    public Collection<? extends GrantedAuthority> getAuthorities() {
+	        // Trả về quyền của người dùng. Nếu bạn không quản lý role, có thể trả về rỗng
+	        return Collections.emptyList();
+	    }
+
+	    @Override
+	    public boolean isAccountNonExpired() {
+	        return true;
+	    }
+
+	    @Override
+	    public boolean isAccountNonLocked() {
+	        return true;
+	    }
+
+	    @Override
+	    public boolean isCredentialsNonExpired() {
+	        return true;
+	    }
+
+	    @Override
+	    public boolean isEnabled() {
+	        return this.enabled;
+	    }
 	
 	
 	public Integer getId() {
@@ -60,5 +100,9 @@ public class User {
 	}
 	public void setSex(String sex) {
 		this.sex = sex;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

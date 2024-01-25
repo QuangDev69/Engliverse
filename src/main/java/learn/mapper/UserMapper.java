@@ -13,4 +13,7 @@ public interface UserMapper {
 	int insert(User user);
 	int update(User user);
 	int deleteById(Integer Id);
+	
+    User findUserByUsername(String username);
+
 }

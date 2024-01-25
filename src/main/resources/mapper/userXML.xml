@@ -14,19 +14,34 @@
     </resultMap>
 
     <select id="selectById" resultMap="userResultMap">
-        SELECT * FROM USER WHERE ID = #{id}
+        <![CDATA[
+        SELECT * FROM USER
+        WHERE ID = #{id}
+        ]]>
     </select>
 
     <select id="selectAll" resultMap="userResultMap">
+        <![CDATA[
         SELECT * FROM USER
+        ]]>
     </select>
 
     <insert id="insert">
-        INSERT INTO USER (USERNAME, EMAIL, PASSWORD, BIRTHDAY, ADDRESS, PHONE, SEX)
-        VALUES (#{username}, #{email}, #{password}, #{birthday}, #{address}, #{phone}, #{sex})
+        <![CDATA[
+        INSERT INTO USER (USERNAME, EMAIL, PASSWORD)
+        VALUES (#{username}, #{email}, #{password})
+        ]]>
     </insert>
+    
+    <select id="findUserByUsername" resultType="learn.model.User">
+        <![CDATA[
+        SELECT * FROM USER
+        WHERE USERNAME = #{username}
+        ]]>
+    </select>
 
     <update id="update">
+        <![CDATA[
         UPDATE USER
         SET USERNAME = #{username},
             EMAIL = #{email},
@@ -36,10 +51,14 @@
             PHONE = #{phone},
             SEX = #{sex}
         WHERE ID = #{id}
+        ]]>
     </update>
 
     <delete id="deleteById">
-        DELETE FROM USER WHERE ID = #{id}
+        <![CDATA[
+        DELETE FROM USER
+        WHERE ID = #{id}
+        ]]>
     </delete>
 
 </mapper>
