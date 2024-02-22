@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+
+</head>
+
+
+<body>
+<div th:fragment="header">
+    <header class="bg-light py-3 px-5">
+        <div class="mx-0 w-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <!-- Logo or H1 -->
+                <div>
+                    <img src="/image/z1.png" alt="Quang Dev Logo" class="img-fluid mx-auto d-block"
+                         style="width: 100px; ">
+                </div>
+
+                <!-- Navigation -->
+                <nav class="d-flex">
+                    <ul class="nav">
+                        <li class="nav-item"><a href="/courses/all" class="nav-link px-2 text-dark">Home</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link px-2 text-dark">Product</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link px-2 text-dark">About</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link px-2 text-dark">Contact</a></li>
+                    </ul>
+                    <div>
+                        <img src="" alt="" class="me-2">
+                        <form th:action="@{/auth/login}" method="post" class="d-inline">
+                            <input type="submit" value="Logout" class="btn btn-outline-primary me-2">
+                            <input type="hidden" name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        </form>
+
+                    </div>
+                </nav>
+
+            </div>
+        </div>
+    </header>
+</div>
+</body>
+</html>
+
+

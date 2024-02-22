@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Courses</title>
+    <!-- Include Bootstrap CSS or your own styling here if you wish -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div layout:fragment="content">
+
+
+    <div class="container mt-3">
+        <h3 class="text-center">Available Courses</h3>
+        <div>
+            <a href="/courses/create" class="btn btn-primary mb-3">Add New Course</a>
+        </div>
+        <div class="row">
+            <div th:each="course, iterStat : ${courses}" class="col-md-3 mb-4">
+                <div class="card">
+                    <img src="/image/avt.png" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${course.courseName}">Course Name</h5>
+                        <p class="card-text" th:text="${course.courseDes}">Description</p>
+                        <div class="d-flex justify-content-between">
+                            <p class="card-text"><small class="text-muted" th:text="${course.topicNames}">Topics</small></p>
+                            <p class="card-text"><small class="text-muted" th:text="${course.levelNames}">Levels</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Kiểm tra nếu đã có 4 cột trong hàng hiện tại, thêm một hàng mới -->
+        </div>
+
+
+    </div>
+</div>
+</body>
+</html>
