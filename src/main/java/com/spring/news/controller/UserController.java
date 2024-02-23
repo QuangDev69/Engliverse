@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.spring.news.domain.User;
@@ -29,10 +32,18 @@ public class UserController {
     
     @GetMapping("/listUser") 
     public String userList(Pageable pageable, Model model) {
-        pageable = PageRequest.of(pageable.getPageNumber(), 10);
-        Page<User> usersPage = userService.findAll(pageable);
-        model.addAttribute("usersPage", usersPage);
-        return "listUser";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
+        if(isAdmin){
+            pageable = PageRequest.of(pageable.getPageNumber(), 10);
+            Page<User> usersPage = userService.findAll(pageable);
+            model.addAttribute("usersPage", usersPage);
+            return "listUser";
+        }
+        else {
+            return "refuse";
+
+        }
     }
     @PostMapping("/add")
     public String addUser(@ModelAttribute User user) {

@@ -10,6 +10,13 @@ public class Topic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer topicId;
 
+    private String topicName;
+
+    @ManyToMany(mappedBy = "topics")
+    private Set<Course> courses;
+
+
+
     public Integer getTopicId() {
         return topicId;
     }
@@ -34,9 +41,6 @@ public class Topic {
         this.courses = courses;
     }
 
-    private String topicName;
 
-    @ManyToMany(mappedBy = "topics")
-    private Set<Course> courses;
 
 }

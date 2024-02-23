@@ -29,7 +29,7 @@ public class SecurityConfig {
 	                formLogin
 	                    .loginPage("/auth/login")
 	                    .loginProcessingUrl("/auth/login")
-	                    .defaultSuccessUrl("/users/listUser", true)
+	                    .defaultSuccessUrl("/courses/all", true)
 	                    .failureUrl("/auth/login?error=true")
 	                    .permitAll()
 	            )

@@ -18,6 +18,16 @@ public class Course {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    @Column(name = "image_path")
+    private String imagePath;
 
     @ManyToMany
     @JoinTable(
@@ -67,6 +77,7 @@ public class Course {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
+
 
     public Set<Topic> getTopics() {
         return topics;

@@ -9,7 +9,11 @@
 <div layout:fragment="content" class="container mt-4 d-flex justify-content-center">
   <div class="w-50">
     <h3 class="text-center">Create Course</h3>
-    <form th:action="@{/courses/save}" th:object="${course}" method="post" class="needs-validation" novalidate>
+    <form th:action="@{/courses/save}" th:object="${course}" enctype="multipart/form-data" method="post" class="needs-validation" novalidate>
+      <div class="mb-3">
+        <label for="image" class="form-label">Course Image:</label>
+        <input type="file" class="form-control" id="image" name="image" />
+      </div>
 
       <div class="mb-3">
         <label for="courseName" class="form-label">Title:</label>

@@ -3,12 +3,15 @@ package com.spring.news.service.serviceImpl;
 import com.spring.news.domain.Course;
 import com.spring.news.domain.Level;
 import com.spring.news.domain.Topic;
+import com.spring.news.domain.User;
 import com.spring.news.repository.CourseRepository;
 import com.spring.news.repository.LevelRepository;
 import com.spring.news.repository.TopicRepository;
 import com.spring.news.service.CourseService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -36,6 +39,11 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public List<Course> findAllCourses() {
         return courseRepository.findAll();
+    }
+
+    @Override
+    public Page<Course> findAll(Pageable pageable) {
+        return courseRepository.findAll(pageable);
     }
 
     @Override
