@@ -1,17 +1,46 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en">
 <head>
-    <title>Layout Template</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
     <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet" />
-
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .wrapper {
+            min-height: 100%;
+            margin-bottom: -60px; /* Bằng với chiều cao của footer */
+        }
+        .wrapper::after {
+            content: '';
+            display: block;
+            height: 60px; /* Bằng với chiều cao của footer */
+        }
+        footer {
+            padding-top: 20px;
+            height: 60px; /* Chiều cao của footer */
+            text-align: center;
+            background-color: #f8f9fa;/* Căn giữa nội dung footer */
+        }
+    </style>
 </head>
 <body>
-<div th:replace="layout/header :: header"></div>
 
-<div layout:fragment="content">
+<div class="wrapper">
+    <div th:replace="layout/header :: header"></div>
+
+    <div layout:fragment="content">
+        <!-- Nội dung chính của trang -->
+    </div>
 </div>
 
-<div th:replace="layout/footer :: footer"></div>
+<footer th:replace="layout/footer :: footer">
+    <!-- Nội dung của footer -->
+</footer>
 
 </body>
 </html>

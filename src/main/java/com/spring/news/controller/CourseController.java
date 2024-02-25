@@ -3,7 +3,6 @@ package com.spring.news.controller;
 import com.spring.news.domain.Course;
 import com.spring.news.domain.Level;
 import com.spring.news.domain.Topic;
-import com.spring.news.domain.User;
 import com.spring.news.dto.CourseDto;
 import com.spring.news.repository.LevelRepository;
 import com.spring.news.repository.TopicRepository;
@@ -12,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +34,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/courses")
 public class CourseController {
-
 
     private final CourseService courseService;
 
@@ -59,12 +60,21 @@ public class CourseController {
                 .collect(Collectors.joining(","));
     }
 
+    private CourseDto convertToDto(Course course) {
+        String topicNames = getTopicNames(course.getTopics());
+        String levelNames = getLevelNames(course.getLevels());
+        return new CourseDto(course.getCourseId(), course.getCourseName(), course.getCourseDes(),
+                course.getImagePath(), topicNames, levelNames);
+    }
+
     @GetMapping("/all")
     public String listCourses(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
                               @RequestParam(value = "size", defaultValue = "8") int size) {
-        Pageable pageable = PageRequest.of(page, size);
 
-        Page<Course> coursePage = courseService.findAll(pageable); // Sử dụng Pageable
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Course> coursePage = courseService.findAll(pageable);
         Page<CourseDto> courseDtoPage = coursePage.map(course -> new CourseDto(
                 course.getCourseId(),
                 course.getCourseName(),
@@ -75,7 +85,7 @@ public class CourseController {
         ));
         model.addAttribute("size", size);
         model.addAttribute("courses", courseDtoPage);
-        return "courses";
+        return isAdmin ? "courses-admin" : "courses";
     }
 
     @GetMapping("/create")
@@ -99,26 +109,39 @@ public class CourseController {
 
     private String saveUploadedFile(MultipartFile file) {
         if (file.isEmpty()) {
-            return null; // Trả về null nếu file rỗng
+            return null;
         }
 
         try {
-            // Đường dẫn đến thư mục bạn muốn lưu file, đã tồn tại
-            Path uploadDirectory = Paths.get("D:/eng/image");
-
-            // Tạo đường dẫn đầy đủ cho file, bao gồm tên file
+            Path uploadDirectory = Paths.get("/Users/duyquang/Documents/eng/image");
             Path filePath = uploadDirectory.resolve(file.getOriginalFilename());
-
-            // Lưu file vào đường dẫn đã chỉ định
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            // Trả về đường dẫn file dưới dạng String, có thể lưu vào database
             return file.getOriginalFilename();
         } catch (IOException e) {
             e.printStackTrace();
-            return null; // Trả về null nếu có lỗi xảy ra
+            return null;
         }
     }
 
+    @GetMapping("/{courseId}")
+    public String getCourseById (Model model, @PathVariable("courseId") int courseId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
+        Course course = courseService.getCourseById(courseId);
+        CourseDto courseDto = convertToDto(course);
+        if(isAdmin) {
+            model.addAttribute("allTopics", topicRepository.findAll());
+            model.addAttribute("allLevels", levelRepository.findAll());
+        }
+        model.addAttribute("course", courseDto);
+        return isAdmin ? "course-detail-admin" : "course-detail";
+    }
+
+    @PostMapping("/update/{courseId}")
+    public String updateCourse(@PathVariable("courseId") int courseId, @ModelAttribute Course course ){
+        course.setCourseId(courseId);
+        courseService.updateCourse(course);
+        return "redirect:/courses/" +courseId;
+    }
 
 }

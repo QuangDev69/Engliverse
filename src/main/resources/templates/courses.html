@@ -55,7 +55,9 @@
                 <div class="card">
                     <img th:src="@{/image/{filename}(filename=${course.imagePath})}" class="card-img-top image" alt="Course Image">
                     <div class="card-body">
-                        <h5 class="card-title title" th:text="${course.courseName}">Course Name</h5>
+                        <h5 class="card-title title">
+                            <a href="#" th:href="@{|/courses/${course.courseId}|}" th:text="${course.courseName}">Course Name</a>
+                        </h5>
                         <p class="card-text two-line-clamp" data-bs-toggle="tooltip" data-bs-placement="left"
                            title="${course.courseDes}" th:text="${course.courseDes}">Description</p>
                         <div class="d-flex justify-content-between">

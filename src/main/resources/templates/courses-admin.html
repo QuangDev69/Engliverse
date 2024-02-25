@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+  <meta charset="UTF-8">
+  <title>Courses</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <style>
+    .image {
+      width: 100px; /* Điều chỉnh lại kích thước ảnh cho phù hợp với bảng */
+      height: 50px; /* Giảm chiều cao ảnh */
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container mt-3">
+    <h3 class="text-center">Available Courses</h3>
+    <div>
+      <a href="/courses/create" class="btn btn-primary mb-3">Add New Course</a>
+    </div>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Image</th>
+        <th>Course Name</th>
+        <th>Description</th>
+        <th>Topics</th>
+        <th>Levels</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="course : ${courses}">
+        <td><img th:src="@{/image/{filename}(filename=${course.imagePath})}" alt="Course Image" class="image"></td>
+        <td th:text="${course.courseName}">Course Name</td>
+        <td th:text="${course.courseDes}">Description</td>
+        <td th:text="${course.topicNames}">Topics</td>
+        <td th:text="${course.levelNames}">Levels</td>
+        <td>
+          <a th:href="@{/courses/{id}(id=${course.courseId})}" class="btn btn-warning btn-sm">Edit</a>
+          <a th:href="@{/courses/{id}(id=${course.courseId})}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <!-- Phần phân trang có thể được giữ nguyên hoặc điều chỉnh cho phù hợp với bảng -->
+    <div class="row">
+      <div class="col">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${courses.isFirst() ? 'disabled' : ''}">
+              <a class="page-link" th:href="@{/courses/all(page=0, size=${courses.size})}">First</a>
+            </li>
+            <li class="page-item" th:classappend="${courses.hasPrevious() ? '' : 'disabled'}">
+              <a class="page-link" th:href="@{/courses/all(page=${courses.number - 1}, size=${courses.size})}">Previous</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(0, courses.totalPages - 1)}" class="page-item"
+                th:classappend="${i == courses.number} ? 'active' : ''">
+              <a class="page-link" th:href="@{/courses/all(page=${i}, size=${courses.size})}" th:text="${i + 1}">Page Number</a>
+            </li>
+            <li class="page-item" th:classappend="${courses.hasNext() ? '' : 'disabled'}">
+              <a class="page-link" th:href="@{/courses/all(page=${courses.number + 1}, size=${courses.size})}">Next</a>
+            </li>
+            <li class="page-item" th:classappend="${courses.isLast() ? 'disabled' : ''}">
+              <a class="page-link" th:href="@{/courses/all(page=${courses.totalPages - 1}, size=${courses.size})}">Last</a>
+            </li>
+          </ul>
+
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip()
+  })
+</script>
+</body>
+</html>

@@ -22,7 +22,7 @@ public class SecurityConfig {
 	            // CSRF protection is enabled by default, no need to explicitly enable it
 	            .authorizeRequests(authorizeRequests -> 
 	                authorizeRequests
-	                    .requestMatchers("/auth/**", "/bootstrap/**", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+	                    .requestMatchers("/auth/**", "/bootstrap/**", "/css/**", "/js/**", "/imageLocal/**", "/webjars/**").permitAll()
 	                    .anyRequest().authenticated()
 	            )
 	            .formLogin(formLogin -> 

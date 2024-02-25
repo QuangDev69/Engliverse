@@ -28,7 +28,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
 
-
     @Autowired
     private TopicRepository topicRepository;
 
@@ -54,6 +53,36 @@ public class CourseServiceImpl implements CourseService {
         course.setTopics(topics);
         course.setLevels(levels);
         return courseRepository.save(course);
+    }
+
+    @Override
+    public Course getCourseById(int courseId) {
+        return courseRepository.findById(courseId).orElse(null);
+    }
+
+    @Override
+    public Course updateCourse(Course courseUpdate) {
+        Course existCourse = courseRepository.findById(courseUpdate.getCourseId()).orElse(null);
+        if (existCourse != null) {
+            existCourse.setCourseName(courseUpdate.getCourseName());
+            existCourse.setCourseDes(courseUpdate.getCourseDes());
+            existCourse.setImagePath(courseUpdate.getImagePath());
+            existCourse.setLevels(courseUpdate.getLevels());
+            existCourse.setTopics(courseUpdate.getTopics());
+
+            return courseRepository.save(existCourse);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Topic> getAllTopics() {
+        return topicRepository.findAll();
+    }
+    
+    @Override
+    public List<Level> getAllLevels() {
+        return levelRepository.findAll();
     }
 
 }
