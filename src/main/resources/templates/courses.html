@@ -7,6 +7,9 @@
     <title>Courses</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
+        .itemss{
+            height: 406px ;
+        }
         .image {
             height: 200px;
             object-fit: cover;
@@ -14,7 +17,13 @@
         .title {
             height: 2.4em; /* Điều chỉnh chiều cao tiêu đề */
         }
-
+        a {
+            color: #0056b3;
+        }
+        a:hover{
+            text-decoration: none;
+            color: #007bff
+        }
         .min {
             max-width: 1240px; /* Giới hạn chiều rộng tối đa của container */
         }
@@ -36,23 +45,46 @@
         <div>
             <a href="/courses/create" class="btn btn-primary mb-3">Add New Course</a>
         </div>
-        <form action="/courses/all" method="get">
+
+        <form action="/courses/all" method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm khóa học..." th:value="${keyword}">
+                <select class="form-select mx-3" name="levelId">
+                    <option value="">Chọn Level</option>
+                    <th:block th:each="level : ${allLevels}">
+                        <option th:value="${level.levelId}" th:selected="${levelId == level.levelId}" th:text="${level.levelName}"></option>
+                    </th:block>
+                </select>
+                <select class="form-select " name="topicId">
+                    <option value="">Chọn Topic</option>
+                    <th:block th:each="topic : ${allTopics}">
+                        <option th:value="${topic.topicId}" th:selected="${topicId == topic.topicId}" th:text="${topic.topicName}"></option>
+                    </th:block>
+                </select>
+                <input type="hidden" name="size" th:value="${size}">
+
+                <input type="hidden" name="levelId" th:value="${levelId}">
+                <input type="hidden" name="topicId" th:value="${topicId}">
+                <button type="submit" class="btn btn-primary mx-3">Lọc</button>
+            </div>
+        </form>
+
+        <form action="/courses/all" method="get" class="mb-3 w-25">
             <div class="form-group">
                 <label for="pageSize">Items per page:</label>
-                <select name="size" id="pageSize" onchange="this.form.submit()">
+                <select name="size" id="pageSize" class="form-select" onchange="this.form.submit()">
                     <option value="8" th:selected="${size == 8}">8</option>
                     <option value="12" th:selected="${size == 12}">12</option>
                     <option value="16" th:selected="${size == 16}">16</option>
                     <option value="20" th:selected="${size == 20}">20</option>
-
                 </select>
             </div>
             <input type="hidden" name="page" value="0"> <!-- Reset về trang đầu tiên khi thay đổi size -->
         </form>
 
         <div class="row">
-            <div th:each="course, iterStat : ${courses}" class="col-sm-12 col-md-6 col-lg-3 mb-4">
-                <div class="card">
+            <div th:each="course, iterStat : ${courses}" class="col-sm-12 col-md-6 col-lg-3 mb-4 itemss">
+                <div class="card h-100">
                     <img th:src="@{/image/{filename}(filename=${course.imagePath})}" class="card-img-top image" alt="Course Image">
                     <div class="card-body">
                         <h5 class="card-title title">
@@ -75,20 +107,20 @@
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:classappend="${courses.isFirst() ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/courses/all(page=0, size=${courses.size})}">First</a>
+                            <a class="page-link" th:href="@{/courses/all(page=0, size=${courses.size}, keyword=${keyword})}">First</a>
                         </li>
                         <li class="page-item" th:classappend="${courses.hasPrevious() ? '' : 'disabled'}">
-                            <a class="page-link" th:href="@{/courses/all(page=${courses.number - 1}, size=${courses.size})}">Previous</a>
+                            <a class="page-link" th:href="@{/courses/all(page=${courses.number - 1}, size=${courses.size}, keyword=${keyword})}">Previous</a>
                         </li>
                         <li th:each="i : ${#numbers.sequence(0, courses.totalPages - 1)}" class="page-item"
                             th:classappend="${i == courses.number} ? 'active' : ''">
-                            <a class="page-link" th:href="@{/courses/all(page=${i}, size=${courses.size})}" th:text="${i + 1}">Page Number</a>
+                            <a class="page-link" th:href="@{/courses/all(page=${i}, size=${courses.size}, keyword=${keyword})}" th:text="${i + 1}">Page Number</a>
                         </li>
                         <li class="page-item" th:classappend="${courses.hasNext() ? '' : 'disabled'}">
-                            <a class="page-link" th:href="@{/courses/all(page=${courses.number + 1}, size=${courses.size})}">Next</a>
+                            <a class="page-link" th:href="@{/courses/all(page=${courses.number + 1}, size=${courses.size}, keyword=${keyword})}">Next</a>
                         </li>
                         <li class="page-item" th:classappend="${courses.isLast() ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/courses/all(page=${courses.totalPages - 1}, size=${courses.size})}">Last</a>
+                            <a class="page-link" th:href="@{/courses/all(page=${courses.totalPages - 1}, size=${courses.size}, keyword=${keyword})}">Last</a>
                         </li>
                     </ul>
 

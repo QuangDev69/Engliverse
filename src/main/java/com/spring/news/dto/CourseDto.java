@@ -1,32 +1,31 @@
 package com.spring.news.dto;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class CourseDto {
-    private int courseId;
+    private Integer courseId;
     private String courseName;
     private String courseDes;
-//    private String creationDate;
     private String topicNames;
     private String levelNames;
     private String imagePath;
 
-    // Constructors, Getters và Setters
-    public CourseDto(int courseId, String courseName, String courseDes,String imagePath,
+    public CourseDto(Integer courseId, String courseName, String courseDes, String imagePath,
                      String topicNames, String levelNames) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseDes = courseDes;
         this.imagePath = imagePath;
-
-//        this.creationDate = creationDate;
         this.topicNames = topicNames;
         this.levelNames = levelNames;
     }
 
-    public int getCourseId() {
+    public Integer getCourseId() {
         return courseId;
     }
+
     public String getImagePath() {
         return imagePath;
     }
@@ -34,7 +33,8 @@ public class CourseDto {
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
-    public void setCourseId(int courseId) {
+
+    public void setCourseId(Integer courseId) {
         this.courseId = courseId;
     }
 
@@ -54,13 +54,6 @@ public class CourseDto {
         this.courseDes = courseDes;
     }
 
-//    public String getCreationDate() {
-//        return creationDate;
-//    }
-//
-//    public void setCreationDate(String creationDate) {
-//        this.creationDate = creationDate;
-//    }
 
     public String getTopicNames() {
         return topicNames;
@@ -77,8 +70,5 @@ public class CourseDto {
     public void setLevelNames(String levelNames) {
         this.levelNames = levelNames;
     }
-
-
-
 
 }

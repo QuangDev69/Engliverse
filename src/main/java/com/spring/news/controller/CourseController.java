@@ -63,18 +63,28 @@ public class CourseController {
     private CourseDto convertToDto(Course course) {
         String topicNames = getTopicNames(course.getTopics());
         String levelNames = getLevelNames(course.getLevels());
-        return new CourseDto(course.getCourseId(), course.getCourseName(), course.getCourseDes(),
+        CourseDto courseDto = new CourseDto(course.getCourseId(), course.getCourseName(), course.getCourseDes(),
                 course.getImagePath(), topicNames, levelNames);
+
+        return courseDto;
     }
+
 
     @GetMapping("/all")
     public String listCourses(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
-                              @RequestParam(value = "size", defaultValue = "8") int size) {
+                              @RequestParam(value = "size", defaultValue = "8") int size,
+                              @RequestParam(value = "keyword", required = false) String keyword,
+                              @RequestParam(value = "levelId", required = false) Integer levelId,
+                              @RequestParam(value = "topicId", required = false) Integer topicId
+                              ) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
         Pageable pageable = PageRequest.of(page, size);
-        Page<Course> coursePage = courseService.findAll(pageable);
+        Page<Course> coursePage = courseService.findCourses(keyword, levelId, topicId, pageable);
+
+
+
         Page<CourseDto> courseDtoPage = coursePage.map(course -> new CourseDto(
                 course.getCourseId(),
                 course.getCourseName(),
@@ -83,8 +93,15 @@ public class CourseController {
                 getTopicNames(course.getTopics()),
                 getLevelNames(course.getLevels())
         ));
+        model.addAttribute("levelId", levelId);
+        model.addAttribute("topicId", topicId);
+        model.addAttribute("allTopics", topicRepository.findAll());
+        model.addAttribute("allLevels", levelRepository.findAll());
         model.addAttribute("size", size);
         model.addAttribute("courses", courseDtoPage);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("totalPages", coursePage.getTotalPages());
+        model.addAttribute("currentPage", page);
         return isAdmin ? "courses-admin" : "courses";
     }
 
@@ -98,11 +115,8 @@ public class CourseController {
 
     @PostMapping("/save")
     public String saveCourse(@ModelAttribute Course course,
-                             @RequestParam("image") MultipartFile file,
                              @RequestParam List<Integer> topicIds,
                              @RequestParam List<Integer> levelIds) {
-        String imagePath = saveUploadedFile(file);
-        course.setImagePath(imagePath);
         courseService.saveCourseWithTopicsAndLevels(course, topicIds, levelIds);
         return "redirect:/courses/all";
     }
@@ -111,9 +125,9 @@ public class CourseController {
         if (file.isEmpty()) {
             return null;
         }
-
         try {
-            Path uploadDirectory = Paths.get("/Users/duyquang/Documents/eng/image");
+//            Path uploadDirectory = Paths.get("/Users/duyquang/Documents/eng/image");
+            Path uploadDirectory = Paths.get("D:/eng/image");
             Path filePath = uploadDirectory.resolve(file.getOriginalFilename());
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             return file.getOriginalFilename();
@@ -124,12 +138,12 @@ public class CourseController {
     }
 
     @GetMapping("/{courseId}")
-    public String getCourseById (Model model, @PathVariable("courseId") int courseId) {
+    public String getCourseById(Model model, @PathVariable("courseId") int courseId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
         Course course = courseService.getCourseById(courseId);
         CourseDto courseDto = convertToDto(course);
-        if(isAdmin) {
+        if (isAdmin) {
             model.addAttribute("allTopics", topicRepository.findAll());
             model.addAttribute("allLevels", levelRepository.findAll());
         }
@@ -138,10 +152,24 @@ public class CourseController {
     }
 
     @PostMapping("/update/{courseId}")
-    public String updateCourse(@PathVariable("courseId") int courseId, @ModelAttribute Course course ){
+    public String updateCourse(@PathVariable("courseId") int courseId, @RequestParam("image") MultipartFile file,
+                               @RequestParam("topicId") int topicId,
+                               @RequestParam("levelId") int levelId,
+                               @ModelAttribute Course course) {
         course.setCourseId(courseId);
+        if (!file.isEmpty()) {
+            String imagePath = saveUploadedFile(file);
+            course.setImagePath(imagePath);
+        } else {
+            if (course.getCourseId() != null) {
+                Course existingCourse = courseService.getCourseById(course.getCourseId());
+                if (existingCourse != null) {
+                    course.setImagePath(existingCourse.getImagePath());
+                }
+            }
+        }
         courseService.updateCourse(course);
-        return "redirect:/courses/" +courseId;
+        return "redirect:/courses/" + courseId;
     }
 
 }

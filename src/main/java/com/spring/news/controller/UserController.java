@@ -42,28 +42,22 @@ public class UserController {
         }
         else {
             return "refuse";
-
         }
     }
     @PostMapping("/add")
     public String addUser(@ModelAttribute User user) {
     	
         userService.addUser(user);
-        
         return "redirect:/users"; 
     }
-    
     
     @GetMapping("/{userId}")
     public String showUserDetail(@PathVariable("userId") int userId, Model model) {
     	
         User user = userService.getUserById(userId);
-
         if (user == null) {
-
             return "error404"; 
         }
-
         model.addAttribute("user", user);
         return "userDetail"; 
     }
@@ -77,8 +71,8 @@ public class UserController {
 
     @PostMapping("/{userId}/update")
     public String updateUser (@PathVariable("userId") int userId,@ModelAttribute User user){
-        user.setUserId(userId);// Đảm bảo rằng id của người dùng được set đúng để cập nhật
+        user.setUserId(userId);
         userService.updateUser(user);
-        return "redirect:/users/listUser"; // Chuyển hướng đến một trang hoặc endpoint khác sau khi cập nhật thành công
+        return "redirect:/users/listUser";
     }
 }

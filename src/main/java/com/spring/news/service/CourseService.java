@@ -23,4 +23,6 @@ public interface CourseService {
      List<Topic> getAllTopics();
 
      List<Level> getAllLevels() ;
+
+    Page<Course> findCourses(String keyword, Integer levelId, Integer topicId, Pageable pageable);
 }

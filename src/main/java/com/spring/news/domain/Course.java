@@ -11,7 +11,7 @@ import java.util.Set;
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int courseId;
+    private Integer courseId;
 
     private String courseName;
     private String courseDes;
@@ -46,11 +46,11 @@ public class Course {
     private Set<Level> levels = new HashSet<>();
 
 
-    public int getCourseId() {
+    public Integer getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(int courseId) {
+    public void setCourseId(Integer courseId) {
         this.courseId = courseId;
     }
 

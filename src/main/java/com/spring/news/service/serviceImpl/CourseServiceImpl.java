@@ -85,4 +85,10 @@ public class CourseServiceImpl implements CourseService {
         return levelRepository.findAll();
     }
 
+    @Override
+
+    public Page<Course> findCourses(String keyword, Integer levelId, Integer topicId, Pageable pageable) {
+        return courseRepository.findCoursesByCriteria(keyword, levelId, topicId, pageable);
+    }
+
 }
