@@ -6,6 +6,7 @@ import com.spring.news.domain.Topic;
 import com.spring.news.dto.CourseDto;
 import com.spring.news.repository.LevelRepository;
 import com.spring.news.repository.TopicRepository;
+import com.spring.news.security.CustomUserDetails;
 import com.spring.news.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -82,7 +83,14 @@ public class CourseController {
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
         Pageable pageable = PageRequest.of(page, size);
         Page<Course> coursePage = courseService.findCourses(keyword, levelId, topicId, pageable);
+/*
 
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            model.addAttribute("userId", userDetails.getUserId());
+            model.addAttribute("isAdmin", isAdmin);
+        }
+*/
 
 
         Page<CourseDto> courseDtoPage = coursePage.map(course -> new CourseDto(
@@ -102,7 +110,7 @@ public class CourseController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("totalPages", coursePage.getTotalPages());
         model.addAttribute("currentPage", page);
-        return isAdmin ? "courses-admin" : "courses";
+        return  "courses";
     }
 
     @GetMapping("/create")
@@ -115,8 +123,11 @@ public class CourseController {
 
     @PostMapping("/save")
     public String saveCourse(@ModelAttribute Course course,
+                             @RequestParam("image") MultipartFile file,
                              @RequestParam List<Integer> topicIds,
                              @RequestParam List<Integer> levelIds) {
+        String imageUrl = saveUploadedFile(file);
+        course.setImagePath(imageUrl);
         courseService.saveCourseWithTopicsAndLevels(course, topicIds, levelIds);
         return "redirect:/courses/all";
     }
@@ -152,9 +163,10 @@ public class CourseController {
     }
 
     @PostMapping("/update/{courseId}")
-    public String updateCourse(@PathVariable("courseId") int courseId, @RequestParam("image") MultipartFile file,
-                               @RequestParam("topicId") int topicId,
-                               @RequestParam("levelId") int levelId,
+    public String updateCourse(@PathVariable("courseId") int courseId,
+                               @RequestParam("image") MultipartFile file,
+                               @RequestParam List<Integer> topicId,
+                               @RequestParam List<Integer> levelId,
                                @ModelAttribute Course course) {
         course.setCourseId(courseId);
         if (!file.isEmpty()) {
@@ -168,7 +180,7 @@ public class CourseController {
                 }
             }
         }
-        courseService.updateCourse(course);
+        courseService.updateCourse(course,topicId, levelId);
         return "redirect:/courses/" + courseId;
     }
 

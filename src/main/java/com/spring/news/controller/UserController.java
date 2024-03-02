@@ -1,5 +1,7 @@
 package com.spring.news.controller;
 
+
+import com.spring.news.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +17,7 @@ import org.springframework.ui.Model;
 import java.util.List;
 
 @Controller
-@RequestMapping("/users") 
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -25,15 +27,16 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/add") 
+    @GetMapping("/add")
     public String addUserForm() {
-        return "addUser"; 
+        return "addUser";
     }
-    
-    @GetMapping("/listUser") 
+
+    @GetMapping("/listUser")
     public String userList(Pageable pageable, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
+
         if(isAdmin){
             pageable = PageRequest.of(pageable.getPageNumber(), 10);
             Page<User> usersPage = userService.findAll(pageable);

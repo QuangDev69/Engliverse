@@ -6,24 +6,29 @@
     <meta charset="UTF-8">
     <title>Courses</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <style>
-        .itemss{
-            height: 406px ;
+    <style th:unless="${isAdmin}">
+        .itemss {
+            height: 406px;
         }
+
         .image {
             height: 200px;
             object-fit: cover;
         }
+
         .title {
             height: 2.4em; /* Điều chỉnh chiều cao tiêu đề */
         }
+
         a {
             color: #0056b3;
         }
-        a:hover{
+
+        a:hover {
             text-decoration: none;
             color: #007bff
         }
+
         .min {
             max-width: 1240px; /* Giới hạn chiều rộng tối đa của container */
         }
@@ -37,6 +42,13 @@
             text-overflow: ellipsis;
         }
     </style>
+    <style th:if="${isAdmin}">
+        .image {
+            width: 100px; /* Điều chỉnh lại kích thước ảnh cho phù hợp với bảng */
+            height: 50px; /* Giảm chiều cao ảnh */
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
@@ -48,23 +60,23 @@
 
         <form action="/courses/all" method="get" class="mb-3">
             <div class="input-group">
-                <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm khóa học..." th:value="${keyword}">
+                <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm khóa học..."
+                       th:value="${keyword}">
                 <select class="form-select mx-3" name="levelId">
-                    <option value="">Chọn Level</option>
+                    <option value="">All Level</option>
                     <th:block th:each="level : ${allLevels}">
-                        <option th:value="${level.levelId}" th:selected="${levelId == level.levelId}" th:text="${level.levelName}"></option>
+                        <option th:value="${level.levelId}" th:selected="${levelId == level.levelId}"
+                                th:text="${level.levelName}"></option>
                     </th:block>
                 </select>
                 <select class="form-select " name="topicId">
-                    <option value="">Chọn Topic</option>
+                    <option value="">All Topic</option>
                     <th:block th:each="topic : ${allTopics}">
-                        <option th:value="${topic.topicId}" th:selected="${topicId == topic.topicId}" th:text="${topic.topicName}"></option>
+                        <option th:value="${topic.topicId}" th:selected="${topicId == topic.topicId}"
+                                th:text="${topic.topicName}"></option>
                     </th:block>
                 </select>
                 <input type="hidden" name="size" th:value="${size}">
-
-                <input type="hidden" name="levelId" th:value="${levelId}">
-                <input type="hidden" name="topicId" th:value="${topicId}">
                 <button type="submit" class="btn btn-primary mx-3">Lọc</button>
             </div>
         </form>
@@ -79,48 +91,44 @@
                     <option value="20" th:selected="${size == 20}">20</option>
                 </select>
             </div>
-            <input type="hidden" name="page" value="0"> <!-- Reset về trang đầu tiên khi thay đổi size -->
+            <input type="hidden" name="page" value="0">
+            <input type="hidden" name="levelId" th:value="${levelId}">
+            <input type="hidden" name="topicId" th:value="${topicId}"><!-- Reset về trang đầu tiên khi thay đổi size -->
         </form>
+        <th:block th:if="${!isAdmin}">
+            <div th:replace="course-fragments/course-cards :: course-cards(courses=${courses})"></div>
+        </th:block>
 
-        <div class="row">
-            <div th:each="course, iterStat : ${courses}" class="col-sm-12 col-md-6 col-lg-3 mb-4 itemss">
-                <div class="card h-100">
-                    <img th:src="@{/image/{filename}(filename=${course.imagePath})}" class="card-img-top image" alt="Course Image">
-                    <div class="card-body">
-                        <h5 class="card-title title">
-                            <a href="#" th:href="@{|/courses/${course.courseId}|}" th:text="${course.courseName}">Course Name</a>
-                        </h5>
-                        <p class="card-text two-line-clamp" data-bs-toggle="tooltip" data-bs-placement="left"
-                           title="${course.courseDes}" th:text="${course.courseDes}">Description</p>
-                        <div class="d-flex justify-content-between">
-                            <p class="card-text"><small class="text-muted" th:text="${course.topicNames}">Topics</small>
-                            </p>
-                            <p class="card-text"><small class="text-muted" th:text="${course.levelNames}">Levels</small>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <th:block th:if="${isAdmin}">
+            <div th:replace="course-fragments/course-table :: course-table(courses=${courses})"></div>
+        </th:block>
+
+
         <div class="row">
             <div class="col">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:classappend="${courses.isFirst() ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/courses/all(page=0, size=${courses.size}, keyword=${keyword})}">First</a>
+                            <a class="page-link"
+                               th:href="@{/courses/all(page=0, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}">First</a>
                         </li>
                         <li class="page-item" th:classappend="${courses.hasPrevious() ? '' : 'disabled'}">
-                            <a class="page-link" th:href="@{/courses/all(page=${courses.number - 1}, size=${courses.size}, keyword=${keyword})}">Previous</a>
+                            <a class="page-link"
+                               th:href="@{/courses/all(page=${courses.number - 1}, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}">Previous</a>
                         </li>
                         <li th:each="i : ${#numbers.sequence(0, courses.totalPages - 1)}" class="page-item"
                             th:classappend="${i == courses.number} ? 'active' : ''">
-                            <a class="page-link" th:href="@{/courses/all(page=${i}, size=${courses.size}, keyword=${keyword})}" th:text="${i + 1}">Page Number</a>
+                            <a class="page-link"
+                               th:href="@{/courses/all(page=${i}, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}"
+                               th:text="${i + 1}">Page Number</a>
                         </li>
                         <li class="page-item" th:classappend="${courses.hasNext() ? '' : 'disabled'}">
-                            <a class="page-link" th:href="@{/courses/all(page=${courses.number + 1}, size=${courses.size}, keyword=${keyword})}">Next</a>
+                            <a class="page-link"
+                               th:href="@{/courses/all(page=${courses.number + 1}, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}">Next</a>
                         </li>
                         <li class="page-item" th:classappend="${courses.isLast() ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/courses/all(page=${courses.totalPages - 1}, size=${courses.size}, keyword=${keyword})}">Last</a>
+                            <a class="page-link"
+                               th:href="@{/courses/all(page=${courses.totalPages - 1}, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}">Last</a>
                         </li>
                     </ul>
 

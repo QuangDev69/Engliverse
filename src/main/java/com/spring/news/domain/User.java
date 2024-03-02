@@ -20,7 +20,7 @@ public class User {
     private String email;
     private String phone;
     private String address;
-
+    private boolean isEnabled ;
 
 
     @Enumerated(EnumType.STRING)
@@ -34,11 +34,9 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    // Constructors
     public User() {
     }
 
-    // Getters và Setters
     public int getUserId() {
         return userId;
     }
@@ -102,13 +100,19 @@ public class User {
     public void setSex(Gender sex) {
         this.sex = sex;
     }
-    // Phương thức tiện ích để thêm role
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
     public void addRole(Role role) {
         this.roles.add(role);
         role.getUsers().add(this);
     }
 
-    // Phương thức tiện ích để xóa role
     public void removeRole(Role role) {
         this.roles.remove(role);
         role.getUsers().remove(this);

@@ -18,7 +18,7 @@ public interface CourseService {
 
     Course getCourseById(int courseId);
 
-    Course updateCourse(Course course);
+    Course updateCourse(Course course,  List<Integer> topicIds, List<Integer> levelIds);
 
      List<Topic> getAllTopics();
 

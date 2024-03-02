@@ -21,6 +21,8 @@ public class AuthController {
 
 	@GetMapping("/login")
 	public String login() {
+		System.out.println("controller  +++++");
+
 		return "login";
 	}
 

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -61,14 +62,23 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course updateCourse(Course courseUpdate) {
+    public Course updateCourse(Course courseUpdate,  List<Integer> topicIds, List<Integer> levelIds) {
         Course existCourse = courseRepository.findById(courseUpdate.getCourseId()).orElse(null);
         if (existCourse != null) {
             existCourse.setCourseName(courseUpdate.getCourseName());
             existCourse.setCourseDes(courseUpdate.getCourseDes());
             existCourse.setImagePath(courseUpdate.getImagePath());
-            existCourse.setLevels(courseUpdate.getLevels());
-            existCourse.setTopics(courseUpdate.getTopics());
+            // Xử lý topics
+            Set<Topic> topics = topicIds.stream()
+                    .map(id -> topicRepository.findById(id).orElse(null))
+                    .collect(Collectors.toSet());
+            existCourse.setTopics(topics);
+
+            // Xử lý levels
+            Set<Level> levels = levelIds.stream()
+                    .map(id -> levelRepository.findById(id).orElse(null))
+                    .collect(Collectors.toSet());
+            existCourse.setLevels(levels);
 
             return courseRepository.save(existCourse);
         }
