@@ -90,4 +90,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(existUser);
     }
 
+    public void changeUserPassword(User user, String newPassword) {
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+    }
+
 }

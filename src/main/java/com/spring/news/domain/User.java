@@ -3,7 +3,9 @@ package com.spring.news.domain;
 import com.spring.news.dto.Gender;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -34,6 +36,17 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
+    public List<PasswordResetToken> getResetTokens() {
+        return resetTokens;
+    }
+
+    public void setResetTokens(List<PasswordResetToken> resetTokens) {
+        this.resetTokens = resetTokens;
+    }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PasswordResetToken> resetTokens = new ArrayList<>();
+
     public User() {
     }
 
@@ -60,6 +73,7 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
 
     public String getEmail() {
         return email;

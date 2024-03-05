@@ -13,6 +13,7 @@
 </head>
 <body>
 
+
 <div class="login-container flex">
         <form th:action="@{/auth/login}" method="post" class="login-card">
 
@@ -38,7 +39,7 @@
                     </div>
                     <div class="mb-3 d-flex justify-content-between">
                         <p class="text-muted custom-font-size">Don't have an account? <a href="/auth/register" class="text-decoration-none text-cl">Register</a></p>
-                        <p class="custom-font-size"><a href="/forgot-password" class="text-decoration-none text-cl">Forgot password?</a></p>
+                        <p class="custom-font-size"><a href="/auth/forgotPassword" class="text-decoration-none text-cl">Forgot password?</a></p>
                     </div>
 
                     <button type="submit" class="btn btn-success w-100 ">Sign in</button>
