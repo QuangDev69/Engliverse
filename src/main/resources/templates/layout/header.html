@@ -33,20 +33,31 @@
                         <li class="nav-item"><a href="#" class="nav-link px-2 text-dark">About</a></li>
                         <li class="nav-item"><a href="#" class="nav-link px-2 text-dark">Contact</a></li>
                     </ul>
-                    <div>
-                        <img src="" alt="" class="me-2">
-                            <form th:action="@{/auth/logout}" method="post" class="d-inline">
-                                <input type="submit" value="Logout" class="btn btn-outline-primary me-2">
-                                <input type="hidden" name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                            </form>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle text-decoration-none" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img th:src="@{${imagePath}}" alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px">
+                        </a>
 
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+                            <li><a class="dropdown-item" th:href="@{/users/{id}(id=${userId})}">Profile</a></li>
+                            <li>
+                                <form action="/auth/logout" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">Logout</button>
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+                                </form>
+                            </li>
+                        </ul>
                     </div>
+
+
                 </nav>
 
             </div>
         </div>
     </header>
 </div>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
 </body>
 </html>
 

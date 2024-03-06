@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
 //                .addResourceLocations("file:/Users/duyquang/Documents/eng/image/");
                 .addResourceLocations("file:///D:/eng/image/");
     }
+
 }
 
 

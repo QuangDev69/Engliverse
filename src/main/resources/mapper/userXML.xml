@@ -25,6 +25,8 @@
         SELECT * FROM USER
         ]]>
     </select>
+    
+    
 
     <insert id="insert">
         <![CDATA[

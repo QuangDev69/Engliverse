@@ -68,7 +68,8 @@ public class UserServiceImpl implements UserService {
     public void deleteUserById(int userId) {
     	userRepository.deleteById(userId);
     }
-    
+
+
     @Override
     public void registerUser(UserDto userDto) {
         User user = new User();
