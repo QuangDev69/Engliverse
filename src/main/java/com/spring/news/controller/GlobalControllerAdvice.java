@@ -41,13 +41,16 @@ public class GlobalControllerAdvice {
         return false;
     }
 
-    @ModelAttribute("imagePath")
-    public String globalImagePath(Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
+    @ModelAttribute("userAvatar")
+    public String userAvatar() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            return imageService.getImagePathByUserId(userDetails.getUserId());
+            System.out.println("Image Path: +"+userDetails.getImagePath());
+            return userDetails.getImagePath();
         }
-        return "/imageLocal/login.avif";
+        return null;
     }
+
 
 }

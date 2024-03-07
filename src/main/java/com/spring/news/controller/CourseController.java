@@ -8,6 +8,7 @@ import com.spring.news.repository.LevelRepository;
 import com.spring.news.repository.TopicRepository;
 import com.spring.news.security.CustomUserDetails;
 import com.spring.news.service.CourseService;
+import com.spring.news.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,10 +38,14 @@ import java.util.stream.Collectors;
 public class CourseController {
 
     private final CourseService courseService;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    public CourseController(CourseService courseService) {
+    public CourseController(CourseService courseService,FileStorageService fileStorageService) {
+
         this.courseService = courseService;
+        this.fileStorageService = fileStorageService;
+
     }
 
     @Autowired
@@ -126,27 +131,12 @@ public class CourseController {
                              @RequestParam("image") MultipartFile file,
                              @RequestParam List<Integer> topicIds,
                              @RequestParam List<Integer> levelIds) {
-        String imageUrl = saveUploadedFile(file);
+        String imageUrl = fileStorageService.storeFile(file);
         course.setImagePath(imageUrl);
         courseService.saveCourseWithTopicsAndLevels(course, topicIds, levelIds);
         return "redirect:/courses/all";
     }
 
-    private String saveUploadedFile(MultipartFile file) {
-        if (file.isEmpty()) {
-            return null;
-        }
-        try {
-//            Path uploadDirectory = Paths.get("/Users/duyquang/Documents/eng/image");
-            Path uploadDirectory = Paths.get("D:/eng/image");
-            Path filePath = uploadDirectory.resolve(file.getOriginalFilename());
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            return file.getOriginalFilename();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     @GetMapping("/{courseId}")
     public String getCourseById(Model model, @PathVariable("courseId") int courseId) {
@@ -170,7 +160,7 @@ public class CourseController {
                                @ModelAttribute Course course) {
         course.setCourseId(courseId);
         if (!file.isEmpty()) {
-            String imagePath = saveUploadedFile(file);
+            String imagePath = fileStorageService.storeFile(file);
             course.setImagePath(imagePath);
         } else {
             if (course.getCourseId() != null) {

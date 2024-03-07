@@ -28,4 +28,6 @@ public interface UserService {
     User updateUser(User user);
 
     void changeUserPassword(User user, String newPassword);
+
+    public void updateSecurityContextUser(User user);
 }

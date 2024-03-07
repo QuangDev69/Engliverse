@@ -2,6 +2,7 @@ package com.spring.news.controller;
 
 
 import com.spring.news.security.CustomUserDetails;
+import com.spring.news.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import com.spring.news.domain.User;
 import com.spring.news.service.UserService;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @Controller
@@ -21,10 +24,13 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, FileStorageService fileStorageService) {
+
         this.userService = userService;
+        this.fileStorageService= fileStorageService;
     }
 
     @GetMapping("/add")
@@ -73,9 +79,21 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/update")
-    public String updateUser (@PathVariable("userId") int userId,@ModelAttribute User user){
+    public String updateUser (@PathVariable("userId") int userId, @ModelAttribute User user,  @RequestParam("image") MultipartFile file){
         user.setUserId(userId);
-        userService.updateUser(user);
-        return "redirect:/users/listUser";
+        if (!file.isEmpty()) {
+            String imagePath = fileStorageService.storeFile(file);
+            user.setImagePath(imagePath);
+        }else {
+            if(user.getUserId() != null) {
+                User existUser = userService.getUserById(user.getUserId());
+                if(existUser != null) {
+                    user.setImagePath(existUser.getImagePath());
+                }
+            }
+        }
+        User updatedUser = userService.updateUser(user);
+        userService.updateSecurityContextUser(updatedUser);
+        return "redirect:/users/" +userId;
     }
 }

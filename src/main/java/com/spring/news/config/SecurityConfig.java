@@ -4,6 +4,8 @@ import com.spring.news.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,7 +18,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig   {
 
 	private final CustomUserDetailsService customUserDetailsService;
 
@@ -31,7 +33,7 @@ public class SecurityConfig {
 	        http
 	            .authorizeRequests(authorizeRequests ->
 	                authorizeRequests
-	                    .requestMatchers("/auth/**", "/bootstrap/**", "/css/**", "/js/**", "/imageLocal/**", "/webjars/**").permitAll()
+	                    .requestMatchers("/auth/**", "/bootstrap/**", "/css/**", "/js/**", "/static/**", "/imageLocal/**", "/webjars/**").permitAll()
 	                    .anyRequest().authenticated()
 	            )
 	            .formLogin(formLogin -> 
@@ -65,4 +67,9 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
+
 }
