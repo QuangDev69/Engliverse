@@ -1,0 +1,25 @@
+<table th:fragment="course-table(courses)" class="table">
+<thead>
+  <tr>
+    <th>Image</th>
+    <th>Course Name</th>
+    <th>Description</th>
+    <th>Topics</th>
+    <th>Levels</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="course : ${courses}">
+    <td><img th:src="@{/image/{filename}(filename=${course.imagePath})}" alt="Course Image" class="image"></td>
+    <td th:text="${course.courseName}">Course Name</td>
+    <td th:text="${course.courseDes}">Description</td>
+    <td th:text="${course.topicNames}">Topics</td>
+    <td th:text="${course.levelNames}">Levels</td>
+    <td class="d-flex ">
+      <a th:href="@{/courses/{id}(id=${course.courseId})}" class="btn btn-warning btn-sm mx-2">Edit</a>
+      <a th:href="@{/courses/{id}(id=${course.courseId})}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>
+    </td>
+  </tr>
+  </tbody>
+</table>

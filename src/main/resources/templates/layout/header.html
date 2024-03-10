@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:fragment="header" >
+    <header class="bg-light py-2 px-5">
+        <div class="mx-0 w-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <a href="/courses/all"><img src="/imageLocal/z1.png" alt="Quang Dev Logo"
+                                                class="img-fluid mx-auto d-block"
+                                                style="width: 90px; "></a>
+                </div>
+                <nav class="d-flex">
+                    <ul class="nav">
+                        <li class="nav-item"><a href="/courses/all" class="nav-link px-2 text-dark">Home</a></li>
+                        <li class="nav-item" th:if="${isAdmin}">
+                            <a href="/users/listUser" class="nav-link px-2 text-dark">User List</a>
+                        </li>
+                        <li class="nav-item"><a href="#" class="nav-link px-2 text-dark">About</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link px-2 text-dark">Contact</a></li>
+                    </ul>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle text-decoration-none" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img th:src="@{{image}(image=${userAvatar})}"  alt="Avatar" class="rounded-circle object-fit-cover" style="width: 40px; height: 40px">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+                            <li><a class="dropdown-item" th:href="@{/users/{id}(id=${userId})}">Profile</a></li>
+                            <li>
+                                <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">Logout</button>
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+</div>
+<script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
+
+

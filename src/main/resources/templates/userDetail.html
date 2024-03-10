@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit User</title>
+    <link th:href="@{/css/user-detail.css}" rel="stylesheet">
+</head>
+
+<body>
+<div layout:fragment="content">
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form id="userForm"  th:action="@{/users/{userId}/update(userId=${user.userId})}" th:object="${user}" method="post"
+                      enctype="multipart/form-data">
+                    <div class="col-md-6 avatar ">
+                        <div class="d-flex">
+                            <div class="position-relative">
+                                <img th:if="${userAvatar != null}"  th:src="@{{image}(image=${userAvatar})}" alt="Avatar Image"
+                                     class="object-fit-cover" >
+                                <div class="icon">
+                                    <i class="fas fa-camera" style="cursor: pointer;"></i>
+                                </div>
+                            </div>
+
+                            <h2 class="text-center d-flex align-items-center ms-4"><span th:text="${user.username}"></span></h2>
+                        </div>
+                        <div class="user-info avatar">
+                            <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                            <p><strong>Phone:</strong> <span th:text="${user.phone}"></span></p>
+                            <p><strong>Address:</strong> <span th:text="${user.address}"></span></p>
+                            <p><strong>Sex:</strong> <span th:text="${user.sex}"></span></p>
+                            <div class="d-flex justify-content-between">
+
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                    Edit
+                                </button>
+                                <a href="/courses/all" class="btn btn-secondary">Back</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="modal fade" id="avatarUpdateModal" tabindex="-1" aria-labelledby="avatarUpdateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="avatarUpdateModalLabel">Update Avatar</h5>
+                                    <button type="button" class="close btn btn-outline-danger" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <img id="previewImage" th:src="@{{image}(image=${userAvatar})}" alt="Preview image" class="pre-avatar">
+                                    <input type="file" id="modalImage" name="image" class="form-control" onchange="previewFile()">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" id="saveAvatarChange">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editUserModalLabel">Edit User Information</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form id="editUserForm" th:action="@{/users/{userId}/update(userId=${user.userId})}" method="post" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        <!-- Repeat the input fields like in your form, but within the modal context -->
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">Username</label>
+                                            <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="phone" class="form-label">Phone</label>
+                                            <input type="text" class="form-control" id="phone" th:field="*{phone}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="address" class="form-label">Address</label>
+                                            <input type="text" class="form-control" id="address" th:field="*{address}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="sex" class="form-label">Sex</label>
+                                            <select class="form-select" id="sex" th:field="*{sex}">
+                                                <option value="MALE">Male</option>
+                                                <option value="FEMALE">Female</option>
+                                                <option value="OTHER">Other</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Repeat for other fields -->
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="d-flex justify-content-between">
+                                            <button type="submit" class="btn btn-primary me-3">Save Changes</button>
+                                            <button type="button" class="btn btn-secondary " id="editInfoUser" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+</div>
+
+
+    <script th:src="@{/js/editAvatar.js}"></script>
+</div>
+</body>
+</html>

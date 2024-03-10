@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Course</title>
+  <style>
+    .container {
+      max-width: 1300px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .btn-primary {
+      background-color: #0056b3;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #004095;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container">
+    <h2>Edit Course</h2>
+    <form th:action="@{/courses/update/{courseId}(courseId=${course.courseId})}" method="post" enctype="multipart/form-data">
+
+      <div class="form-group">
+        <label for="courseName">Course Name</label>
+        <input type="text" id="courseName" name="courseName" class="form-control" th:value="${course.courseName}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="courseDes">Course Description</label>
+        <textarea id="courseDes" name="courseDes" class="form-control" required>[[${course.courseDes}]]</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="levelSelect">Level Names:</label>
+        <select id="levelSelect" name="levelId" class="form-control">
+          <th:block th:each="level : ${allLevels}">
+            <option th:value="${level.levelId}" th:text="${level.levelName}"
+                    th:selected="${course.levelNames.equals(level.levelName)}"></option>
+          </th:block>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="topicSelect">Topic Names:</label>
+        <select id="topicSelect" name="topicId" class="form-control">
+          <th:block th:each="topic : ${allTopics}">
+            <option th:value="${topic.topicId}" th:text="${topic.topicName}"
+                    th:selected="${course.topicNames.equals(topic.topicName)}"></option>
+          </th:block>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="image">Course Image</label>
+        <input type="file" id="image" name="image" class="form-control" >
+
+        <img id="imagePreview" th:src="@{/image/{filename}(filename=${course.imagePath})}" style="max-width: 100%; height: auto;" alt="Current Course Image" />
+      </div>
+      <input type="hidden" name="id" th:value="${course.courseId}">
+      <input type="hidden" name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+      <button type="submit" class="btn btn-primary">Update Course</button>
+      <a href="/courses/all" class="btn btn-secondary">Back</a>
+    </form>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
