@@ -47,16 +47,12 @@ public class AuthController {
 		}
 
 		User existingUsername = userService.findByUsername(userDto.getUsername());
-		
  		if (existingUsername != null) {
-			
 			model.addAttribute("usernameError", "Username already exists.");
-			
 			return "register";
 		}
 
 		User existingEmail = userService.findByEmail(userDto.getEmail());
-		
 		if (existingEmail != null) {
 			model.addAttribute("emailError", "Email already exists.");
 			return "register";
