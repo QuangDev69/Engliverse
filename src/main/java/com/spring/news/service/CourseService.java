@@ -14,15 +14,18 @@ public interface CourseService {
 
     Page<Course> findAll(Pageable pageable);
 
-    Course saveCourseWithTopicsAndLevels(Course course, List<Integer> topicIds, List<Integer> levelIds);
+    Course saveCourseWithTopicsAndLevels(Course course, List<Integer> topicIds, Integer levelId);
 
     Course getCourseById(int courseId);
 
-    Course updateCourse(Course course,  List<Integer> topicIds, List<Integer> levelIds);
+    Course updateCourse(Course course,  List<Integer> topicIds, Integer levelId);
 
      List<Topic> getAllTopics();
 
      List<Level> getAllLevels() ;
 
     Page<Course> findCourses(String keyword, Integer levelId, Integer topicId, Pageable pageable);
+
+    void deleteCourseById(int courseId);
+
 }

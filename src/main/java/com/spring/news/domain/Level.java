@@ -12,7 +12,7 @@ public class Level {
     private Integer levelId;
     private String levelName;
 
-    @ManyToMany(mappedBy = "levels")
+    @OneToMany(mappedBy = "level")
     private Set<Course> courses;
 
     public Integer getLevelId() {

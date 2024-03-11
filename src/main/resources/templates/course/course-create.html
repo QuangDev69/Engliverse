@@ -9,17 +9,19 @@
 <div layout:fragment="content" class="container mt-4 d-flex justify-content-center">
   <div class="w-50">
     <h3 class="text-center">Create Course</h3>
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+      <p th:text="${error}"></p>
+    </div>
     <form th:action="@{/courses/save}" th:object="${course}" enctype="multipart/form-data" method="post" class="needs-validation" novalidate>
       <div class="mb-3">
         <label for="image" class="form-label">Course Image:</label>
-        <input type="file" class="form-control" id="image" name="image" />
+        <input type="file" class="form-control" id="image" name="image" required />
       </div>
 
       <div class="mb-3">
         <label for="courseName" class="form-label">Title:</label>
         <input type="text" class="form-control" id="courseName" th:field="*{courseName}" required />
       </div>
-
 
       <div class="mb-3">
         <label for="courseDes" class="form-label">Description:</label>
@@ -30,14 +32,14 @@
         <div class="col">
           <strong>Topics:</strong>
           <div th:each="topic : ${allTopics}" class="form-check">
-            <input class="form-check-input" type="checkbox" th:value="${topic.topicId}" th:name="topicIds" th:id="${'topic-' + topic.topicId}" />
+            <input class="form-check-input" type="checkbox" th:value="${topic.topicId}" th:name="topicIds" th:id="${'topic-' + topic.topicId}" required />
             <label class="form-check-label" th:for="${'topic-' + topic.topicId}" th:text="${topic.topicName}"></label>
           </div>
         </div>
         <div class="col">
           <strong>Levels:</strong>
           <div th:each="level : ${allLevels}" class="form-check">
-            <input class="form-check-input" type="checkbox" th:value="${level.levelId}" th:name="levelIds" th:id="${'level-' + level.levelId}" />
+            <input class="form-check-input" type="radio" th:value="${level.levelId}" th:name="levelId" th:id="${'level-' + level.levelId}"  />
             <label class="form-check-label" th:for="${'level-' + level.levelId}" th:text="${level.levelName}"></label>
           </div>
         </div>
@@ -48,6 +50,7 @@
 
     </form>
   </div>
+  <script th:src="@{/js/courses/create.js}"></script>
 </div>
 </body>
 </html>

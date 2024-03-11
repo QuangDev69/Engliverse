@@ -48,11 +48,11 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public Course saveCourseWithTopicsAndLevels(Course course, List<Integer> topicId, List<Integer> levelId) {
+    public Course saveCourseWithTopicsAndLevels(Course course, List<Integer> topicId, Integer levelId) {
         Set<Topic> topics = new HashSet<>(topicRepository.findAllById(topicId));
-        Set<Level> levels = new HashSet<>(levelRepository.findAllById(levelId));
+        Level level = levelRepository.findById(levelId).orElseThrow(() -> new IllegalArgumentException("Invalid level id: " + levelId));
         course.setTopics(topics);
-        course.setLevels(levels);
+        course.setLevel(level);
         return courseRepository.save(course);
     }
 
@@ -62,7 +62,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course updateCourse(Course courseUpdate,  List<Integer> topicIds, List<Integer> levelIds) {
+    public Course updateCourse(Course courseUpdate,  List<Integer> topicIds, Integer levelId) {
         Course existCourse = courseRepository.findById(courseUpdate.getCourseId()).orElse(null);
         if (existCourse != null) {
             existCourse.setCourseName(courseUpdate.getCourseName());
@@ -75,10 +75,8 @@ public class CourseServiceImpl implements CourseService {
             existCourse.setTopics(topics);
 
             // Xử lý levels
-            Set<Level> levels = levelIds.stream()
-                    .map(id -> levelRepository.findById(id).orElse(null))
-                    .collect(Collectors.toSet());
-            existCourse.setLevels(levels);
+            Level level = levelRepository.findById(levelId).orElse(null);
+            existCourse.setLevel(level);
 
             return courseRepository.save(existCourse);
         }
@@ -99,6 +97,10 @@ public class CourseServiceImpl implements CourseService {
 
     public Page<Course> findCourses(String keyword, Integer levelId, Integer topicId, Pageable pageable) {
         return courseRepository.findCoursesByCriteria(keyword, levelId, topicId, pageable);
+    }
+    @Override
+    public void deleteCourseById(int courseId) {
+        courseRepository.deleteById(courseId);
     }
 
 }

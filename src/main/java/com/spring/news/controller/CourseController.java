@@ -60,15 +60,10 @@ public class CourseController {
                 .collect(Collectors.joining(","));
     }
 
-    private String getLevelNames(Set<Level> levels) {
-        return levels.stream()
-                .map(Level::getLevelName)
-                .collect(Collectors.joining(","));
-    }
 
     private CourseDto convertToDto(Course course) {
         String topicNames = getTopicNames(course.getTopics());
-        String levelNames = getLevelNames(course.getLevels());
+        String levelNames =  course.getLevel() != null ? course.getLevel().getLevelName() : null;
         CourseDto courseDto = new CourseDto(course.getCourseId(), course.getCourseName(), course.getCourseDes(),
                 course.getImagePath(), topicNames, levelNames);
 
@@ -88,24 +83,20 @@ public class CourseController {
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
         Pageable pageable = PageRequest.of(page, size);
         Page<Course> coursePage = courseService.findCourses(keyword, levelId, topicId, pageable);
-/*
 
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            model.addAttribute("userId", userDetails.getUserId());
-            model.addAttribute("isAdmin", isAdmin);
-        }
-*/
+        Page<CourseDto> courseDtoPage = coursePage.map(course -> {
+            String topicNames = getTopicNames(course.getTopics());
+            String levelName = course.getLevel() != null ? course.getLevel().getLevelName() : null;
+            return new CourseDto(
+                    course.getCourseId(),
+                    course.getCourseName(),
+                    course.getCourseDes(),
+                    course.getImagePath(),
+                    topicNames,
+                    levelName
+            );
+        });
 
-
-        Page<CourseDto> courseDtoPage = coursePage.map(course -> new CourseDto(
-                course.getCourseId(),
-                course.getCourseName(),
-                course.getCourseDes(),
-                course.getImagePath(),
-                getTopicNames(course.getTopics()),
-                getLevelNames(course.getLevels())
-        ));
         model.addAttribute("levelId", levelId);
         model.addAttribute("topicId", topicId);
         model.addAttribute("allTopics", topicRepository.findAll());
@@ -130,12 +121,24 @@ public class CourseController {
     public String saveCourse(@ModelAttribute Course course,
                              @RequestParam("image") MultipartFile file,
                              @RequestParam List<Integer> topicIds,
-                             @RequestParam List<Integer> levelIds) {
+                             @RequestParam Integer levelId,
+                             Model model) {
+
+        // Kiểm tra các trường bắt buộc và số lượng topic đã chọn
+        if (course.getCourseName().isEmpty() || course.getCourseDes().isEmpty() || file.isEmpty() || topicIds.isEmpty() || levelId == null || topicIds.size() > 2) {
+            model.addAttribute("course", course);
+            model.addAttribute("allTopics", topicRepository.findAll());
+            model.addAttribute("allLevels", levelRepository.findAll());
+            return "/course/course-create";
+        }
+
         String imageUrl = fileStorageService.storeFile(file);
         course.setImagePath(imageUrl);
-        courseService.saveCourseWithTopicsAndLevels(course, topicIds, levelIds);
+        courseService.saveCourseWithTopicsAndLevels(course, topicIds, levelId);
         return "redirect:/courses/all";
     }
+
+
 
 
     @GetMapping("/{courseId}")
@@ -155,8 +158,8 @@ public class CourseController {
     @PostMapping("/update/{courseId}")
     public String updateCourse(@PathVariable("courseId") int courseId,
                                @RequestParam("image") MultipartFile file,
-                               @RequestParam List<Integer> topicId,
-                               @RequestParam List<Integer> levelId,
+                               @RequestParam List<Integer> topicIds,
+                               @RequestParam Integer levelId,
                                @ModelAttribute Course course) {
         course.setCourseId(courseId);
         if (!file.isEmpty()) {
@@ -170,8 +173,14 @@ public class CourseController {
                 }
             }
         }
-        courseService.updateCourse(course,topicId, levelId);
+        courseService.updateCourse(course,topicIds, levelId);
         return "redirect:/courses/" + courseId;
+    }
+
+    @PostMapping("/{courseId}/delete")
+    public String deleteCourse(@PathVariable("courseId") int courseId) {
+        courseService.deleteCourseById(courseId);
+        return "redirect:/courses/all";
     }
 
 }

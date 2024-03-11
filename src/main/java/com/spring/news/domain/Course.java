@@ -37,13 +37,9 @@ public class Course {
     )
     private Set<Topic> topics = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "course_level",
-            joinColumns = @JoinColumn(name = "courseId"),
-            inverseJoinColumns = @JoinColumn(name = "levelId")
-    )
-    private Set<Level> levels = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "levelId")
+    private Level level;
 
 
     public Integer getCourseId() {
@@ -87,11 +83,11 @@ public class Course {
         this.topics = topics;
     }
 
-    public Set<Level> getLevels() {
-        return levels;
+    public Level getLevel() {
+        return level;
     }
 
-    public void setLevels(Set<Level> levels) {
-        this.levels = levels;
+    public void setLevel(Level level) {
+        this.level = level;
     }
 }

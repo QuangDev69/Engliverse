@@ -9,17 +9,17 @@ public class CourseDto {
     private String courseName;
     private String courseDes;
     private String topicNames;
-    private String levelNames;
+    private String levelName;
     private String imagePath;
 
     public CourseDto(Integer courseId, String courseName, String courseDes, String imagePath,
-                     String topicNames, String levelNames) {
+                     String topicNames, String levelName) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseDes = courseDes;
         this.imagePath = imagePath;
         this.topicNames = topicNames;
-        this.levelNames = levelNames;
+        this.levelName = levelName;
     }
 
     public Integer getCourseId() {
@@ -63,12 +63,12 @@ public class CourseDto {
         this.topicNames = topicNames;
     }
 
-    public String getLevelNames() {
-        return levelNames;
+    public String getLevelName() {
+        return levelName;
     }
 
-    public void setLevelNames(String levelNames) {
-        this.levelNames = levelNames;
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
     }
 
 }

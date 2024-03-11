@@ -48,6 +48,9 @@
             height: 50px; /* Giảm chiều cao ảnh */
             object-fit: cover;
         }
+        .two-line-clamp {
+            max-width: 200px;
+        }
     </style>
 </head>
 <body>
@@ -116,12 +119,27 @@
                             <a class="page-link"
                                th:href="@{/courses/all(page=${courses.number - 1}, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}">Previous</a>
                         </li>
-                        <li th:each="i : ${#numbers.sequence(0, courses.totalPages - 1)}" class="page-item"
-                            th:classappend="${i == courses.number} ? 'active' : ''">
-                            <a class="page-link"
-                               th:href="@{/courses/all(page=${i}, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}"
-                               th:text="${i + 1}">Page Number</a>
-                        </li>
+
+                        <!-- Xác định phạm vi bắt đầu và kết thúc cho phân trang -->
+                        <th:block th:with="start=${T(java.lang.Math).max(courses.number - 2, 0)},
+                        end=${T(java.lang.Math).min(courses.number + 2, courses.totalPages - 1)}">
+
+                            <!-- Hiển thị dấu ba chấm nếu có trang trước phạm vi bắt đầu -->
+                            <li th:if="${start > 0}" class="page-item disabled">
+                                <span class="page-link bg-light">...</span>
+                            </li>
+
+                            <!-- Lặp qua các trang trong phạm vi bắt đầu và kết thúc -->
+                            <li th:each="i : ${#numbers.sequence(start, end)}" class="page-item" th:classappend="${i == courses.number} ? 'active' : ''">
+                                <a class="page-link" th:href="@{/courses/all(page=${i}, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}" th:text="${i + 1}">Số Trang</a>
+                            </li>
+
+                            <!-- Hiển thị dấu ba chấm nếu có trang sau phạm vi kết thúc -->
+                            <li th:if="${end < courses.totalPages - 1}" class="page-item disabled">
+                                <span class="page-link bg-light">...</span>
+                            </li>
+                        </th:block>
+
                         <li class="page-item" th:classappend="${courses.hasNext() ? '' : 'disabled'}">
                             <a class="page-link"
                                th:href="@{/courses/all(page=${courses.number + 1}, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}">Next</a>
@@ -131,20 +149,46 @@
                                th:href="@{/courses/all(page=${courses.totalPages - 1}, size=${courses.size}, keyword=${keyword}, topicId=${topicId}, levelId=${levelId})}">Last</a>
                         </li>
                     </ul>
-
                 </nav>
             </div>
+            <div class="row">
+                <div class="col text-center">
+                    <form id="goToPageForm" th:action="@{/courses/all}" method="get" class="form-inline justify-content-center">
+                        <input type="hidden" name="size" th:value="${courses.size}" />
+                        <input type="hidden" name="keyword" th:value="${keyword}" />
+                        <input type="hidden" name="topicId" th:value="${topicId}" />
+                        <input type="hidden" name="levelId" th:value="${levelId}" />
+                        <div class="form-group mx-sm-3 mb-2">
+                            <label for="goToPage" class="sr-only">Go to page</label>
+                            <input type="number" class="form-control" id="goToPage" name="page" min="1" max="${courses.totalPages}" placeholder="Page #" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">Go</button>
+                    </form>
+                </div>
+            </div>
+
+
+
+
         </div>
 
     </div>
+    <script>
+        $(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip()
+        })
+        $(document).ready(function() {
+            $('#goToPageForm').on('submit', function(e) {
+                var page = parseInt($('#goToPage').val());
+                if (page > 1) {
+                    $('#goToPage').val(page - 1);
+                } else {
+                    $('#goToPage').val(0);
+                }
+            });
+        });
+    </script>
 </div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script>
-    $(function () {
-        $('[data-bs-toggle="tooltip"]').tooltip()
-    })
-</script>
+
 </body>
 </html>
