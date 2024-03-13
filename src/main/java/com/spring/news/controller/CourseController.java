@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/courses")
 public class CourseController {
 
+    // Inject các service và repository cần thiết cho các thao tác với Course.
     private final CourseService courseService;
     private final FileStorageService fileStorageService;
 
@@ -54,19 +55,20 @@ public class CourseController {
     @Autowired
     private LevelRepository levelRepository;
 
+    // Hàm trợ giúp để chuyển đổi danh sách các Topic thành một chuỗi tên, cách nhau bởi dấu phẩy.
     private String getTopicNames(Set<Topic> topics) {
         return topics.stream()
                 .map(Topic::getTopicName)
                 .collect(Collectors.joining(","));
     }
 
-
+    // Hàm trợ giúp để chuyển đổi đối tượng Course sang CourseDto.
     private CourseDto convertToDto(Course course) {
         String topicNames = getTopicNames(course.getTopics());
         String levelNames =  course.getLevel() != null ? course.getLevel().getLevelName() : null;
         CourseDto courseDto = new CourseDto(course.getCourseId(), course.getCourseName(), course.getCourseDes(),
                 course.getImagePath(), topicNames, levelNames);
-
+        courseDto.setLessons(course.getLessons());
         return courseDto;
     }
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Lesson</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+<div class="container mt-5">
+    <h2>Edit Lesson</h2>
+    <form th:action="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}" th:object="${lesson}" method="post">
+        <div class="mb-3">
+            <label for="name" class="form-label">Lesson Name</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Enter lesson name">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Lesson Description</label>
+            <textarea class="form-control" id="description" th:field="*{description}" rows="3" placeholder="Enter lesson description"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="code" class="form-label">Lesson Code</label>
+            <input type="text" class="form-control" id="code" th:field="*{code}" placeholder="Enter lesson code">
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+</div>
+
+<!-- Bootstrap Bundle with Popper -->
+</body>
+</html>

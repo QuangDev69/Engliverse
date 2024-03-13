@@ -1,30 +1,39 @@
-<table th:fragment="course-table(courses)" class="table">
-<thead>
-  <tr>
-    <th>Image</th>
-    <th>Course Name</th>
-    <th>Description</th>
-    <th>Topics</th>
-    <th>Levels</th>
-    <th>Actions</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="course : ${courses}">
-    <td><img th:src="@{/image/{filename}(filename=${course.imagePath})}" alt="Course Image" class="image"></td>
-    <td > <a th:href="@{/courses/{id}(id=${course.courseId})}" class="text-decoration-none text-info fw-bolder" th:text="${course.courseName}"></a></td>
-    <td class="card-text two-line-clamp text-truncate" data-bs-toggle="tooltip" data-bs-placement="left"
-        th:title="${course.courseDes}" th:text="${course.courseDes}">Description</td>
-    <td th:text="${course.topicNames}">Topics</td>
-    <td th:text="${course.levelName}">Levels</td>
-    <td class="d-flex ">
-      <a th:href="@{/courses/{id}(id=${course.courseId})}" class="btn btn-info  mx-2">Edit</a>
-      <form th:action="@{/courses/{id}/delete(id=${course.courseId})}" method="post" onclick="return confirm('Are you sure?')">
-        <button class="btn btn-danger" type="submit">Delete</button>
-        <input type="hidden" name="courseId" th:value="${course.courseId}"/>
-      </form>
-<!--      <a th:href="@{/courses/{id}(id=${course.courseId})}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</a>-->
-    </td>
-  </tr>
-  </tbody>
-</table>
+
+
+    <table th:fragment="course-table(courses)" class="table">
+        <thead>
+        <tr>
+            <th>Image</th>
+            <th>Course Name</th>
+            <th>Description</th>
+            <th>Topics</th>
+            <th>Levels</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="course : ${courses}">
+            <td>
+                <img th:src="@{/image/{filename}(filename=${course.imagePath})}"
+                                                      alt="Course Image" class="image">
+            </td>
+            <td><a th:href="@{/courses/{id}(id=${course.courseId})}" class="text-decoration-none text-black "
+                   th:text="${course.courseName}"></a></td>
+            <td class="card-text two-line-clamp text-truncate" data-bs-toggle="tooltip" data-bs-placement="left"
+                th:title="${course.courseDes}" th:text="${course.courseDes}">Description
+            </td>
+            <td th:text="${course.topicNames}">Topics</td>
+            <td th:text="${course.levelName}">Levels</td>
+            <td>
+                <div class="d-flex ">
+                    <a th:href="@{/courses/{id}(id=${course.courseId})}" class="btn btn-info  mx-2">Edit</a>
+                    <form th:action="@{/courses/{id}/delete(id=${course.courseId})}" method="post"
+                          onclick="return confirm('Are you sure?')">
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                        <input type="hidden" name="courseId" th:value="${course.courseId}"/>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>

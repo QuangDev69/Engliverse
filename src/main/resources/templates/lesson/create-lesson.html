@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Lesson</title>
+</head>
+<body>
+
+<div th:if="${not #lists.isEmpty(course)}">
+    <h2>Add Lesson to: <span th:text="${course.courseName}"></span></h2>
+
+    <form th:action="@{/courses/{courseId}/lessons/add(courseId=${course.courseId})}" th:object="${lesson}" method="post">
+        <input type="text" th:field="*{name}" name="name"  placeholder="Lesson Name" />
+        <input type="text" th:field="*{code}" name="code"  placeholder="Lesson Code" />
+        <textarea th:field="*{description}" name="description" placeholder="Lesson Description"></textarea>
+        <button type="submit">Add Lesson</button>
+    </form>
+</div>
+
+<a href="/courses">Back to Courses</a>
+
+</body>
+</html>

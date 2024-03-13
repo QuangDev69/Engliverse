@@ -3,85 +3,119 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout.html}">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Course</title>
-  <style>
-    .container {
-      max-width: 1300px;
-      margin: 20px auto;
-      padding: 20px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Course</title>
+    <style>
+        .container {
+            max-width: 1300px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-    .form-group {
-      margin-bottom: 15px;
-    }
+        #courseDes {
+            min-height: 110px;
+        }
 
-    .btn-primary {
-      background-color: #0056b3;
-      border: none;
-    }
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-    .btn-primary:hover {
-      background-color: #004095;
-    }
-  </style>
+        .btn-primary {
+            background-color: #0056b3;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #004095;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
-  <div class="container">
-    <h2>Edit Course</h2>
-    <form th:action="@{/courses/update/{courseId}(courseId=${course.courseId})}" method="post" enctype="multipart/form-data">
+    <div class="container" style="max-width: 900px">
+        <h2>Edit Course</h2>
+        <form th:action="@{/courses/update/{courseId}(courseId=${course.courseId})}" method="post"
+              enctype="multipart/form-data">
+            <!-- Row for Course Name and Level Select -->
+            <div class="row">
+                <div class="col-md-8 form-group">
+                    <label for="courseName">Course Name</label>
+                    <input type="text" id="courseName" name="courseName" class="form-control"
+                           th:value="${course.courseName}" required>
+                </div>
 
-      <div class="form-group">
-        <label for="courseName">Course Name</label>
-        <input type="text" id="courseName" name="courseName" class="form-control" th:value="${course.courseName}" required>
-      </div>
+                <div class="col-md-4 form-group">
+                    <label for="levelSelect">Level Names:</label>
+                    <select id="levelSelect" name="levelId" class="form-control">
+                        <th:block th:each="level : ${allLevels}">
+                            <option th:value="${level.levelId}" th:text="${level.levelName}"
+                                    th:selected="${course.levelName.equals(level.levelName)}"></option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
 
-      <div class="form-group">
-        <label for="courseDes">Course Description</label>
-        <textarea id="courseDes" name="courseDes" class="form-control" required>[[${course.courseDes}]]</textarea>
-      </div>
+            <!-- Full width row for Course Description -->
+            <div class="row">
+                <div class="col-12 form-group">
+                    <label for="courseDes">Course Description</label>
+                    <textarea id="courseDes" name="courseDes" class="form-control"
+                              required>[[${course.courseDes}]]</textarea>
+                </div>
+            </div>
 
-      <div class="form-group">
-        <label for="levelSelect">Level Names:</label>
-        <select id="levelSelect" name="levelId" class="form-control">
-          <th:block th:each="level : ${allLevels}">
-            <option th:value="${level.levelId}" th:text="${level.levelName}"
-                    th:selected="${course.levelName.equals(level.levelName)}"></option>
-          </th:block>
-        </select>
-      </div>
+            <!-- Full width row for Topics, due to potential length -->
+            <div class="form-group ">
+                <strong>Topics:</strong>
+                <div class="form-group row ms-0 ">
+                    <div th:each="topic : ${allTopics}" class="form-check col-3  my-1">
+                        <input class="form-check-input" type="checkbox" th:value="${topic.topicId}" th:name="topicIds"
+                               th:id="${'topic-' + topic.topicId}"
+                               th:checked="${course.topicNames.contains(topic.topicName)}"/>
+                        <label class="form-check-label" th:for="${'topic-' + topic.topicId}"
+                               th:text="${topic.topicName}"></label>
+                    </div>
+                </div>
+            </div>
 
-      <div class="form-group">
-        <strong>Topics:</strong>
-        <div th:each="topic : ${allTopics}" class="form-check">
-          <input class="form-check-input" type="checkbox" th:value="${topic.topicId}" th:name="topicIds" th:id="${'topic-' + topic.topicId}"
-             th:checked="${course.topicNames.contains(topic.topicName)}" />
-          <label class="form-check-label" th:for="${'topic-' + topic.topicId}" th:text="${topic.topicName}"></label>
-        </div>
-      </div>
+            <!-- Row for Course Image -->
+            <div class="row">
+                <div class="col-12 form-group">
+                    <label for="image" class="row "> <strong> Course Image:</strong>
+                    </label>
+                    <img id="imagePreview" class="object-fit-cover my-3"
+                         th:src="@{/image/{filename}(filename=${course.imagePath})}"
+                         style="min-width:300px; max-width: 300px; max-height: 300px;" alt="Current Course Image"/>
+                    <input type="file" id="image" name="image" class="form-control w-50">
 
-      <div class="form-group">
-        <label for="image">Course Image</label>
-        <input type="file" id="image" name="image" class="form-control" >
+                </div>
 
-        <img id="imagePreview" class="object-fit-cover" th:src="@{/image/{filename}(filename=${course.imagePath})}" style=" min-width:300px; max-width: 300px; max-height: 300px;" alt="Current Course Image" />
-      </div>
-      <input type="hidden" name="id" th:value="${course.courseId}">
-      <input type="hidden" name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            </div>
 
-      <button type="submit" class="btn btn-primary">Update Course</button>
-      <a href="/courses/all" class="btn btn-secondary">Back</a>
-    </form>
-  </div>
+            <input type="hidden" name="id" th:value="${course.courseId}">
+            <input type="hidden" name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
-  <script th:src="@{/js/courses/update.js}"></script>
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Update Course</button>
+                    <a href="/courses/all" class="btn btn-secondary">Back</a>
+                </div>
+            </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        </form>
+    </div>
+
+    <th:block >
+        <div th:replace="lesson-fragments/lesson-list :: lesson-cards"></div>
+    </th:block>
+
+
+    <script th:src="@{/js/courses/update.js}"></script>
+
 </div>
 </body>
 </html>

@@ -5,7 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Courses</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style th:unless="${isAdmin}">
         .itemss {
             height: 406px;
@@ -153,7 +152,7 @@
             </div>
             <div class="row">
                 <div class="col text-center">
-                    <form id="goToPageForm" th:action="@{/courses/all}" method="get" class="form-inline justify-content-center">
+                    <form id="goToPageForm" th:action="@{/courses/all}" method="get" class="d-flex justify-content-center">
                         <input type="hidden" name="size" th:value="${courses.size}" />
                         <input type="hidden" name="keyword" th:value="${keyword}" />
                         <input type="hidden" name="topicId" th:value="${topicId}" />
@@ -174,9 +173,7 @@
 
     </div>
     <script>
-        $(function () {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
+
         $(document).ready(function() {
             $('#goToPageForm').on('submit', function(e) {
                 var page = parseInt($('#goToPage').val());

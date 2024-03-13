@@ -16,7 +16,6 @@ public class Course {
     private String courseName;
     private String courseDes;
     @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
 
     public String getImagePath() {
         return imagePath;
@@ -40,6 +39,24 @@ public class Course {
     @ManyToOne
     @JoinColumn(name = "levelId")
     private Level level;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Lesson> lessons = new HashSet<>();
+
+    public Set<Lesson> getLessons() {return lessons; }
+    public void setLessons(Set<Lesson> lessons) {
+        this.lessons = lessons;
+    }
+
+    public void addLesson(Lesson lesson) {
+        lessons.add(lesson);
+        lesson.setCourse(this);
+    }
+
+    public void removeLesson(Lesson lesson) {
+        lessons.remove(lesson);
+        lesson.setCourse(null);
+    }
 
 
     public Integer getCourseId() {
@@ -66,13 +83,6 @@ public class Course {
         this.courseDes = courseDes;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
 
 
     public Set<Topic> getTopics() {

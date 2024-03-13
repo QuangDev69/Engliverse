@@ -1,0 +1,23 @@
+<div class="container mt-4" th:fragment="lesson-cards">
+  <div class="d-flex justify-content-between">
+    <h3>Lessons</h3>
+    <a th:if="${isAdmin}" class="text-decoration-none text-success"
+       th:href="@{/courses/{id}/lessons/add(id=${course.courseId})}">
+      <i class="fas fa-plus"></i>
+      Add new lesson</a>
+
+  </div>
+  <div th:if="${not #lists.isEmpty(course.lessons)}">
+    <ul class="list-group">
+      <li class="list-group-item" th:each="lesson : ${course.lessons}">
+        <a th:href="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}">
+          <span th:text="${lesson.name}">Lesson Name</span>:
+          <span th:text="${lesson.description}">Lesson Description</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div th:unless="${not #lists.isEmpty(course.lessons)}">
+    <p>No lessons available for this course.</p>
+  </div>
+</div>
