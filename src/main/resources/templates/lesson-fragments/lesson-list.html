@@ -1,21 +1,20 @@
 <div class="container mt-4" th:fragment="lesson-cards">
-  <div class="d-flex justify-content-between">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Lessons</h3>
-    <a th:if="${isAdmin}" class="text-decoration-none text-success"
-       th:href="@{/courses/{id}/lessons/add(id=${course.courseId})}">
-      <i class="fas fa-plus"></i>
-      Add new lesson</a>
-
+    <a th:if="${isAdmin}" class="btn btn-success" th:href="@{/courses/{id}/lessons/add(id=${course.courseId})}">
+      <i class="fas fa-plus"></i> Add new lesson
+    </a>
   </div>
-  <div th:if="${not #lists.isEmpty(course.lessons)}">
-    <ul class="list-group">
-      <li class="list-group-item" th:each="lesson : ${course.lessons}">
-        <a th:href="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}">
-          <span th:text="${lesson.name}">Lesson Name</span>:
-          <span th:text="${lesson.description}">Lesson Description</span>
-        </a>
-      </li>
-    </ul>
+  <div th:if="${not #lists.isEmpty(course.lessons)}" class="row">
+    <div class="col-md-3" th:each="lesson : ${course.lessons}">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title" th:text="${lesson.name}">Lesson Name</h5>
+          <p class="card-text" th:text="${lesson.description}">Lesson Description</p>
+          <a th:href="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}" class="btn btn-primary">View Lesson</a>
+        </div>
+      </div>
+    </div>
   </div>
   <div th:unless="${not #lists.isEmpty(course.lessons)}">
     <p>No lessons available for this course.</p>

@@ -1,6 +1,7 @@
 package com.spring.news.controller;
 
 import com.spring.news.domain.Course;
+import com.spring.news.domain.Lesson;
 import com.spring.news.domain.Level;
 import com.spring.news.domain.Topic;
 import com.spring.news.dto.CourseDto;
@@ -9,6 +10,7 @@ import com.spring.news.repository.TopicRepository;
 import com.spring.news.security.CustomUserDetails;
 import com.spring.news.service.CourseService;
 import com.spring.news.service.FileStorageService;
+import com.spring.news.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,10 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -54,6 +53,9 @@ public class CourseController {
 
     @Autowired
     private LevelRepository levelRepository;
+
+    @Autowired
+    private LessonService lessonService;
 
     // Hàm trợ giúp để chuyển đổi danh sách các Topic thành một chuỗi tên, cách nhau bởi dấu phẩy.
     private String getTopicNames(Set<Topic> topics) {
@@ -85,7 +87,13 @@ public class CourseController {
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
         Pageable pageable = PageRequest.of(page, size);
         Page<Course> coursePage = courseService.findCourses(keyword, levelId, topicId, pageable);
+        List<Course> courses = courseService.findAllCourses();
+        Map<Integer, List<Lesson>> courseLessonsMap = new HashMap<>();
 
+        for (Course course : courses) {
+            List<Lesson> lessons = lessonService.findLessonsByCourseId(course.getCourseId());
+            courseLessonsMap.put(course.getCourseId(), lessons);
+        }
         Page<CourseDto> courseDtoPage = coursePage.map(course -> {
             String topicNames = getTopicNames(course.getTopics());
             String levelName = course.getLevel() != null ? course.getLevel().getLevelName() : null;
@@ -99,6 +107,7 @@ public class CourseController {
             );
         });
 
+        model.addAttribute("courseLessonsMap", courseLessonsMap);
         model.addAttribute("levelId", levelId);
         model.addAttribute("topicId", topicId);
         model.addAttribute("allTopics", topicRepository.findAll());
@@ -185,4 +194,24 @@ public class CourseController {
         return "redirect:/courses/all";
     }
 
+    @GetMapping("/course-lesson")
+    public String showCourses(Model model) {
+        List<Course> courses = courseService.findAllCourses();
+        model.addAttribute("courses", courses);
+        return "/course/overview";
+    }
+//    @GetMapping("/list-lesson")
+//    public String listCourses(Model model) {
+//        List<Course> courses = courseService.findAllCourses();
+//        Map<Integer, List<Lesson>> courseLessonsMap = new HashMap<>();
+//
+//        for (Course course : courses) {
+//            List<Lesson> lessons = lessonService.findLessonsByCourseId(course.getCourseId());
+//            courseLessonsMap.put(course.getCourseId(), lessons);
+//        }
+//
+//        model.addAttribute("courses", courses);
+//        model.addAttribute("courseLessonsMap", courseLessonsMap);
+//        return "lesson/all-lesson";
+//    }
 }

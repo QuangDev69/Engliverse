@@ -7,6 +7,8 @@ import com.spring.news.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LessonServiceImpl implements LessonService {
 
@@ -39,5 +41,10 @@ public class LessonServiceImpl implements LessonService {
         return null;
     }
 
+
+    @Override
+    public List<Lesson> findLessonsByCourseId(Integer courseId) {
+        return lessonRepository.findByCourse_CourseId(courseId);
+    }
 
 }

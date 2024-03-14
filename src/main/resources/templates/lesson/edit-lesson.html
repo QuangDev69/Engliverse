@@ -5,30 +5,74 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Lesson</title>
+    <style th:if="${isAdmin}">
+        .container {
+            background-color: #f8f9fa; /* Màu nền nhẹ cho container */
+            padding: 20px;
+            border-radius: 8px; /* Bo góc cho container */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Thêm bóng đổ */
+        }
+        .form-label {
+            font-weight: bold; /* Làm đậm font cho labels */
+        }
+        .form-control {
+            border-radius: 5px; /* Bo góc cho các trường nhập */
+        }
+        .btn-primary, .btn-secondary {
+            margin: 5px 0; /* Thêm khoảng cách giữa các nút */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Thay đổi màu khi hover */
+        }
+        .btn-secondary:hover {
+            background-color: #6c757d; /* Thay đổi màu khi hover */
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
 
-<div class="container mt-5">
-    <h2>Edit Lesson</h2>
-    <form th:action="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}" th:object="${lesson}" method="post">
+    <div th:if="${isAdmin}" class="container mt-5">
+        <h2>Edit Lesson</h2>
+        <form th:action="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}"
+              th:object="${lesson}" method="post">
+            <div class="mb-3">
+                <label for="name" class="form-label">Lesson Name</label>
+                <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Enter lesson name">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Lesson Description</label>
+                <textarea class="form-control" id="description" th:field="*{description}" rows="3"
+                          placeholder="Enter lesson description"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="code" class="form-label">Lesson Code</label>
+                <input type="text" class="form-control" id="code" th:field="*{code}" placeholder="Enter lesson code">
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a th:href="@{/courses/{courseId}(courseId= ${course.courseId})}" class="btn btn-secondary">Cancel</a>
+
+        </form>
+    </div>
+
+    <div th:unless="${isAdmin}" class="container mt-5">
+        <h2>Lesson Details</h2>
         <div class="mb-3">
-            <label for="name" class="form-label">Lesson Name</label>
-            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Enter lesson name">
+            <label for="name" class="form-label">Lesson Name:</label>
+            <p class="form-control-plaintext" id="name" th:text="${lesson.name}">Lesson Name</p>
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Lesson Description</label>
-            <textarea class="form-control" id="description" th:field="*{description}" rows="3" placeholder="Enter lesson description"></textarea>
+            <label for="description" class="form-label">Lesson Description:</label>
+            <p class="form-control-plaintext" id="description" th:text="${lesson.description}">Lesson Description</p>
         </div>
         <div class="mb-3">
-            <label for="code" class="form-label">Lesson Code</label>
-            <input type="text" class="form-control" id="code" th:field="*{code}" placeholder="Enter lesson code">
+            <label for="code" class="form-label">Lesson Code:</label>
+            <p class="form-control-plaintext" id="code" th:text="${lesson.code}">Lesson Code</p>
         </div>
-        <button type="submit" class="btn btn-primary">Save Changes</button>
-    </form>
-</div>
+        <a th:href="@{/courses/{courseId}(courseId= ${course.courseId})}" class="btn btn-secondary">Back to Course</a>
+    </div>
+
 </div>
 
-<!-- Bootstrap Bundle with Popper -->
 </body>
 </html>

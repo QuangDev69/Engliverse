@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div th:each="course : ${courses}">
+        <div>
+            <h2 th:text="${course.courseName}">Course Name</h2>
+            <div th:if="${not #lists.isEmpty(courseLessonsMap.get(course.courseId))}">
+                <ul>
+                    <li th:each="lesson : ${courseLessonsMap.get(course.courseId)}">
+                        <span th:text="${lesson.name}">Lesson Name</span> -
+                        <span th:text="${lesson.description}">Lesson Description</span>
+                    </li>
+                </ul>
+            </div>
+            <div th:unless="${not #lists.isEmpty(courseLessonsMap.get(course.courseId))}">
+                <p>No lessons available for this course.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -6,12 +6,10 @@
     <meta charset="UTF-8">
     <title>Courses</title>
     <style th:unless="${isAdmin}">
-        .itemss {
-            height: 406px;
-        }
+
 
         .image {
-            height: 200px;
+            height: 140px;
             object-fit: cover;
         }
 
@@ -20,11 +18,13 @@
         }
 
         a {
+            font-size: 18px;
             color: #0056b3;
+            text-decoration: none;
+
         }
 
         a:hover {
-            text-decoration: none;
             color: #007bff
         }
 
@@ -39,6 +39,8 @@
             overflow: hidden;
             height: 3em; /* Điều chỉnh chiều cao để hiển thị đúng 2 dòng */
             text-overflow: ellipsis;
+            font-size: smaller;
+
         }
     </style>
     <style th:if="${isAdmin}">
