@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-
 </head>
 <body>
-<table th:fragment="course-table(courses)" class="table table-responsive  table-bordered">
+<table th:fragment="course-table(courses)" class="table table-responsive table-bordered">
     <thead class="table-light">
     <tr>
         <th>Image</th>
@@ -29,52 +30,36 @@
         <td class="align-middle" th:text="${course.levelName}">Levels</td>
         <td class="align-middle">
             <div th:if="${not #lists.isEmpty(courseLessonsMap.get(course.courseId))}">
-                <ul class="list-group list-group-flush">
-                    <li th:each="lesson, iterStat : ${courseLessonsMap.get(course.courseId)}"
-                        th:class="${iterStat.count > 2} ? 'list-group-item d-none' : 'list-group-item'"
+                <span th:text="${#lists.size(courseLessonsMap.get(course.courseId))} + ' lessons.'"></span>
+                <ul class="list-group list-group-flush d-none" th:id=" ${course.courseId}">
+                    <li th:each="lesson : ${courseLessonsMap.get(course.courseId)}"
                         class="list-group-item">
                         <span th:text="${lesson.name}">Lesson Name</span> -
                         <span th:text="${lesson.description}">Lesson Description</span>
                     </li>
                 </ul>
-                <button th:if="${#lists.size(courseLessonsMap.get(course.courseId)) > 2}"
-                        class="btn btn-primary btn-sm" onclick="showAllLessons(this)">Show All</button>
+                <a class="text-decoration-none" style="cursor: pointer" th:onclick="'toggleLessonList(' + ${course.courseId} + ')'">Show All</a>
             </div>
             <div th:unless="${not #lists.isEmpty(courseLessonsMap.get(course.courseId))}">
-                <p>No lessons available for this course.</p>
+                <p>There are no lessons.</p>
             </div>
         </td>
-
-
-
 
         <td class="align-middle">
             <div class="d-flex justify-content-start">
                 <a th:href="@{/courses/{id}(id=${course.courseId})}" class="btn btn-primary me-2">Edit</a>
-                <form th:action="@{/courses/{id}/delete(id=${course.courseId})}" method="post"
-                      onsubmit="return confirm('Are you sure?')">
+                <form th:action="@{/courses/{id}/delete(id=${course.courseId})}" method="post" onsubmit="return confirm('Are you sure?')">
                     <button class="btn btn-danger" type="submit">Delete</button>
                     <input type="hidden" name="courseId" th:value="${course.courseId}"/>
                 </form>
             </div>
         </td>
+        <script th:src="@{/js/courses/course-table.js}"></script>
+
     </tr>
+
     </tbody>
-
-
 </table>
-<script>
-    function showAllLessons(button) {
-        var list = button.closest('td').querySelector('.list-group');
-        var hiddenItems = list.querySelectorAll('.d-none');
-
-        hiddenItems.forEach(function(item) {
-            item.classList.toggle('d-none');
-        });
-
-        button.textContent = button.textContent === 'Show All' ? 'Compact' : 'Show All';
-    }
-</script>
 
 </body>
 </html>

@@ -32,7 +32,7 @@
                         class="btn btn-primary btn-sm show-all-btn" onclick="toggleLessons(this)">Show All</button>
             </div>
             <div th:unless="${not #lists.isEmpty(courseLessonsMap.get(course.courseId))}">
-                <p>No lessons available for this course.</p>
+                <p>There are no lessons.</p>
             </div>
             <script>
                 function toggleLessons(button) {
