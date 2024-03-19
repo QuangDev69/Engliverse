@@ -5,6 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/course-table.css}">
+
 </head>
 <body>
 <table th:fragment="course-table(courses)" class="table table-responsive table-bordered">
@@ -22,12 +24,12 @@
     <tr th:each="course : ${courses}">
         <td class="align-middle">
             <img th:src="@{/image/{filename}(filename=${course.imagePath})}"
-                 alt="Course Image" class="img-thumbnail" style="width: 100px; height: auto;">
+                 alt="Course Image" class="img-thumbnail" style="width: 100px; height: 65px; object-fit: cover;">
         </td>
-        <td class="align-middle"><a th:href="@{/courses/{id}(id=${course.courseId})}" class="text-decoration-none text-dark"
+        <td class="align-middle"><a th:href="@{/courses/{id}(id=${course.courseId})}" class="tag-a text-dark"
                                     th:text="${course.courseName}"></a></td>
         <td class="align-middle" th:text="${course.topicNames}">Topics</td>
-        <td class="align-middle" th:text="${course.levelName}">Levels</td>
+        <td class="align-middle" th:text="${course.levelName}" th:attr="data-level=${course.levelName}"><span></span></td>
         <td class="align-middle">
             <div th:if="${not #lists.isEmpty(courseLessonsMap.get(course.courseId))}">
                 <span th:text="${#lists.size(courseLessonsMap.get(course.courseId))} + ' lessons.'"></span>

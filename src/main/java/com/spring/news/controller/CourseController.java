@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -133,19 +134,28 @@ public class CourseController {
                              @RequestParam("image") MultipartFile file,
                              @RequestParam List<Integer> topicIds,
                              @RequestParam Integer levelId,
-                             Model model) {
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
 
-        // Kiểm tra các trường bắt buộc và số lượng topic đã chọn
         if (course.getCourseName().isEmpty() || course.getCourseDes().isEmpty() || file.isEmpty() || topicIds.isEmpty() || levelId == null || topicIds.size() > 2) {
             model.addAttribute("course", course);
             model.addAttribute("allTopics", topicRepository.findAll());
             model.addAttribute("allLevels", levelRepository.findAll());
+            model.addAttribute("error", "Please fill all required fields and select up to 2 topics.");
             return "/course/course-create";
         }
 
-        String imageUrl = fileStorageService.storeFile(file);
-        course.setImagePath(imageUrl);
-        courseService.saveCourseWithTopicsAndLevels(course, topicIds, levelId);
+        try {
+            String imageUrl = fileStorageService.storeFile(file);
+            course.setImagePath(imageUrl);
+            courseService.saveCourseWithTopicsAndLevels(course, topicIds, levelId);
+            // Thêm thông báo thành công
+            redirectAttributes.addFlashAttribute("success", "Course added successfully!");
+        } catch (Exception e) {
+            // Trường hợp xử lý lỗi, có thể thêm thông báo lỗi cụ thể nếu muốn
+            redirectAttributes.addFlashAttribute("error", "Failed to add course.");
+            return "redirect:/course/course-create";
+        }
         return "redirect:/courses/all";
     }
 

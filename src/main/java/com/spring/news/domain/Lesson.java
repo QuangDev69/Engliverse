@@ -12,6 +12,15 @@ public class Lesson {
     private String code;
     private String name;
     private String description;
+    private String content;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courseId")

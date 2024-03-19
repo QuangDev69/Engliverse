@@ -4,14 +4,16 @@
       layout:decorate="~{layout/layout.html}">
 <head>
   <title>Create Course</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 <body>
 <div layout:fragment="content" class="container mt-4 d-flex justify-content-center">
   <div class="w-50">
     <h3 class="text-center">Create Course</h3>
-    <div th:if="${error}" class="alert alert-danger" role="alert">
-      <p th:text="${error}"></p>
-    </div>
+
+
     <form th:action="@{/courses/save}" th:object="${course}" enctype="multipart/form-data" method="post" class="needs-validation" novalidate>
       <div class="mb-3">
         <label for="image" class="form-label">Course Image:</label>
@@ -50,6 +52,16 @@
 
     </form>
   </div>
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function() {
+      var errorMessage = [[${error}]];
+      if (errorMessage != null && errorMessage !== '') {
+        toastr.error(errorMessage);
+      }
+    });
+    /*]]>*/
+  </script>
   <script th:src="@{/js/courses/create.js}"></script>
 </div>
 </body>

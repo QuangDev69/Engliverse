@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Add Lesson</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <!-- Thêm Quill JavaScript -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 </head>
 <body>
 
@@ -13,11 +16,30 @@
         <input type="text" th:field="*{name}" name="name"  placeholder="Lesson Name" />
         <input type="text" th:field="*{code}" name="code"  placeholder="Lesson Code" />
         <textarea th:field="*{description}" name="description" placeholder="Lesson Description"></textarea>
+        <div id="quill-editor" style="height: 200px;">
+
+        </div>
+        <!-- Hidden input for description -->
+        <input type="hidden"  name="content" id="content">
         <button type="submit">Add Lesson</button>
     </form>
 </div>
 
 <a href="/courses">Back to Courses</a>
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    var quill = new Quill('#quill-editor', {
+        theme: 'snow'
+    });
+
+    var form = document.querySelector('form');
+    form.onsubmit = function() {
+        var content = document.querySelector('input[name=content]');
+        content.value = quill.root.innerHTML;
+    };
+</script>
+
 
 </body>
 </html>

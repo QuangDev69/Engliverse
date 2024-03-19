@@ -36,6 +36,7 @@ public class LessonServiceImpl implements LessonService {
             existLesson.setName(lesson.getName());
             existLesson.setDescription(lesson.getDescription());
             existLesson.setCode(lesson.getCode());
+            existLesson.setContent(lesson.getContent());
             return lessonRepository.save(existLesson);
         }
         return null;
