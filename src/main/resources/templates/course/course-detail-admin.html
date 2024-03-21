@@ -6,6 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Course</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
         .container {
             max-width: 1300px;
@@ -39,7 +43,7 @@
     <div class="container" style="max-width: 900px">
         <h2>Edit Course</h2>
         <form th:action="@{/courses/update/{courseId}(courseId=${course.courseId})}" method="post"
-              enctype="multipart/form-data">
+              enctype="multipart/form-data" name="ADMIN">
             <!-- Row for Course Name and Level Select -->
             <div class="row">
                 <div class="col-md-8 form-group">
@@ -107,14 +111,21 @@
             </div>
 
         </form>
+
     </div>
 
     <th:block >
         <div th:replace="lesson-fragments/lesson-list :: lesson-cards"></div>
     </th:block>
 
-
+    <script th:inline="javascript">
+        var successMessage = /*[[${success}]]*/ null;
+    </script>
+    <script src="/js/notify/success.js"></script>
     <script th:src="@{/js/courses/update.js}"></script>
+
+
+
 
 </div>
 </body>

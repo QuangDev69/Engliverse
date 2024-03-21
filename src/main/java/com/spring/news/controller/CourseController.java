@@ -181,7 +181,8 @@ public class CourseController {
                                @RequestParam("image") MultipartFile file,
                                @RequestParam List<Integer> topicIds,
                                @RequestParam Integer levelId,
-                               @ModelAttribute Course course) {
+                               @ModelAttribute Course course,
+                               RedirectAttributes redirectAttributes) {
         course.setCourseId(courseId);
         if (!file.isEmpty()) {
             String imagePath = fileStorageService.storeFile(file);
@@ -194,6 +195,7 @@ public class CourseController {
                 }
             }
         }
+        redirectAttributes.addFlashAttribute("success", "Course updated successfully!");
         courseService.updateCourse(course,topicIds, levelId);
         return "redirect:/courses/" + courseId;
     }

@@ -43,7 +43,7 @@
                 <a class="text-decoration-none" style="cursor: pointer" th:onclick="'toggleLessonList(' + ${course.courseId} + ')'">Show All</a>
             </div>
             <div th:unless="${not #lists.isEmpty(courseLessonsMap.get(course.courseId))}">
-                <p>There are no lessons.</p>
+                <p class="text-muted">There are no lessons.</p>
             </div>
         </td>
 
