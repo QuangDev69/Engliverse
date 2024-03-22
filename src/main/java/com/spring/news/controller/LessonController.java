@@ -34,9 +34,7 @@ public class LessonController {
 
     @GetMapping("/{courseId}/lessons/add")
     public String showLessonAdd(@PathVariable int courseId, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
-        if (isAdmin) {
+        if (securityService.isAdmin()) {
 
         Course course = courseService.getCourseById(courseId);
         model.addAttribute("course", course);
@@ -125,5 +123,13 @@ public class LessonController {
         return "redirect:/courses/" + courseId + "/lessons/" + lessonId;
     }
 
+    @PostMapping("/{courseId}/delete/{lessonId}")
+    public String deleteLessonById(@PathVariable("lessonId") Integer lessonId,
+                                   @PathVariable("courseId") int courseId) {
+        if(securityService.isAdmin()){
+            lessonService.deleteLessonById(lessonId);
+        }
+        return "redirect:/courses/" +courseId;
+    }
 
 }

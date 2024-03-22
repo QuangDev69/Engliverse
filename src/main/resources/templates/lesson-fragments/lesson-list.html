@@ -14,7 +14,13 @@
             <span class="me-1">:</span>
             <span th:text="${lesson.description}">Lesson Description</span>
           </div>
-          <a th:href="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}" class="btn btn-success btn-sm">View</a>
+          <a th:href="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}" class="btn btn-success btn-sm me-2">View</a>
+          <form th:action="@{/courses/{courseId}/delete/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}" method="post" onsubmit="return confirm('Are you sure?')">
+            <input type="hidden" name="_method" value="delete" />
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+
+
         </div>
       </li>
     </ul>

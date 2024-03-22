@@ -9,5 +9,5 @@ public interface LessonService {
     Lesson getLessonById(Integer id);
     Lesson updateLesson(Lesson lesson);
     List<Lesson> findLessonsByCourseId(Integer courseId);
-
+    void deleteLessonById(int lessonId);
 }

@@ -11,6 +11,7 @@ import com.spring.news.security.CustomUserDetails;
 import com.spring.news.service.CourseService;
 import com.spring.news.service.FileStorageService;
 import com.spring.news.service.LessonService;
+import com.spring.news.service.PageableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,6 +59,9 @@ public class CourseController {
     @Autowired
     private LessonService lessonService;
 
+    @Autowired
+    private PageableService pageableService;
+
     // Hàm trợ giúp để chuyển đổi danh sách các Topic thành một chuỗi tên, cách nhau bởi dấu phẩy.
     private String getTopicNames(Set<Topic> topics) {
         return topics.stream()
@@ -84,8 +88,6 @@ public class CourseController {
                               @RequestParam(value = "topicId", required = false) Integer topicId
                               ) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"));
         Pageable pageable = PageRequest.of(page, size);
         Page<Course> coursePage = courseService.findCourses(keyword, levelId, topicId, pageable);
         List<Course> courses = courseService.findAllCourses();
@@ -201,8 +203,10 @@ public class CourseController {
     }
 
     @PostMapping("/{courseId}/delete")
-    public String deleteCourse(@PathVariable("courseId") int courseId) {
+    public String deleteCourse(@PathVariable("courseId") int courseId,
+                               RedirectAttributes redirectAttributes) {
         courseService.deleteCourseById(courseId);
+        redirectAttributes.addFlashAttribute("success", "Successfully deleted the course.");
         return "redirect:/courses/all";
     }
 

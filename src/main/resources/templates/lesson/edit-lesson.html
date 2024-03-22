@@ -46,6 +46,7 @@
 
 
         </form>
+        <a th:href="@{/courses/{coursesId}/lessons/{lessonId}/add-question(coursesId=${course.courseId}, lessonId=${lesson.id})}">Add question</a>
     </div>
 
     <script th:inline="javascript">

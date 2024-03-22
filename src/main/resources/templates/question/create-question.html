@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+    <title>Add Question</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function () {
+            var optionsIndex = 2; // Giả sử bắt đầu với 2 lựa chọn
+            $('#addOption').click(function () {
+                var newOption = '<div id="option' + optionsIndex + '">' +
+                    '<input type="text" name="options[' + optionsIndex + '].content" required/>' +
+                    '<input type="checkbox" name="options[' + optionsIndex + '].isCorrect"/>' + ' Is Correct?' +
+                    '<button type="button" onclick="removeOption(' + optionsIndex + ')">Remove</button>' +
+                    '</div>';
+                $('#optionsContainer').append(newOption);
+                optionsIndex++;
+            });
+        });
+
+        function removeOption(index) {
+            $('#option' + index).remove();
+        }
+        /*]]>*/
+    </script>
+</head>
+<body>
+<div layout:fragment="content">
+
+<h2>Add New Question</h2>
+
+<!-- Cập nhật action của form để bao gồm courseId và lessonId từ path variables -->
+<form th:action="@{/courses/{courseId}/lessons/{lessonId}/add-question(courseId=${course.courseId}, lessonId=${lesson.id})}" th:object="${question}" method="post">
+    <div>
+        <label for="content">Question:</label>
+        <input type="text" id="content" name="content" th:value="*{content}" required/>
+    </div>
+    <div id="optionsContainer">
+        <div>
+            <input type="text" name="options[0].content" th:value="*{options[0].content}" required/>
+            <input type="checkbox" name="options[0].isCorrect" th:checked="*{options[0].isCorrect}"/> Is Correct?
+        </div>
+        <div>
+            <input type="text" name="options[1].content" th:value="*{options[1].content}" required/>
+            <input type="checkbox" name="options[1].isCorrect" th:checked="*{options[1].isCorrect}"/> Is Correct?
+        </div>
+    </div>
+    <button type="button" id="addOption">Add Option</button>
+    <button type="submit">Submit</button>
+</form>
+</div>
+</body>
+</html>
