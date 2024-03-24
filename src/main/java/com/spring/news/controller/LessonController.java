@@ -3,9 +3,11 @@ package com.spring.news.controller;
 
 import com.spring.news.domain.Course;
 import com.spring.news.domain.Lesson;
+import com.spring.news.domain.Question;
 import com.spring.news.security.SecurityService;
 import com.spring.news.service.CourseService;
 import com.spring.news.service.LessonService;
+import com.spring.news.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,6 +33,9 @@ public class LessonController {
 
     @Autowired
     private SecurityService securityService;
+
+    @Autowired
+    private QuestionService questionService;
 
     @GetMapping("/{courseId}/lessons/add")
     public String showLessonAdd(@PathVariable int courseId, Model model) {
@@ -104,10 +109,14 @@ public class LessonController {
                             @PathVariable Integer lessonId,
                             Model model) {
         Lesson lesson = lessonService.getLessonById(lessonId);
+
         Course course = courseService.getCourseById(courseId);
+        List<Question> questions = questionService.getQuestionsByLessonId(lessonId);
+
         lesson.setCourse(course);
         model.addAttribute("lesson", lesson);
         model.addAttribute("course", course);
+        model.addAttribute("questions", questions);
         return "/lesson/edit-lesson";
     }
 

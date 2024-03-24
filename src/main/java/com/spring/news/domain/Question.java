@@ -1,6 +1,9 @@
 package com.spring.news.domain;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,7 +21,8 @@ public class Question {
     private Lesson lesson;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Option> options;
+    private List<Option> options = new ArrayList<>();
+
 
     // Getters and setters
     public Integer getId() {
@@ -45,11 +49,11 @@ public class Question {
         this.lesson = lesson;
     }
 
-    public Set<Option> getOptions() {
+    public List<Option> getOptions() {
         return options;
     }
 
-    public void setOptions(Set<Option> options) {
+    public void setOptions(List<Option> options) {
         this.options = options;
     }
 }

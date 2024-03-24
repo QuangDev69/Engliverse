@@ -6,56 +6,106 @@
     <meta charset="UTF-8">
     <title>Edit Lesson</title>
     <!-- Thêm Quill CSS -->
+
 </head>
 <body>
 <div layout:fragment="content" class="container mt-4">
 
     <div class="container mt-5" th:if="${not #lists.isEmpty(course)}">
         <h2>Edit Lesson for: <span th:text="${course.courseName}"></span></h2>
+        <div th:if="${isAdmin}">
+            <form th:action="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}"
+                  th:object="${lesson}" method="post" class="mt-4">
+                <div class="form-group">
+                    <label for="name">Lesson Name</label>
+                    <input type="text" th:field="*{name}" name="name" class="form-control" id="name"
+                           placeholder="Lesson Name">
+                </div>
 
-        <form th:action="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}"
-              th:object="${lesson}" method="post" class="mt-4">
-            <div class="form-group">
-                <label for="name">Lesson Name</label>
-                <input type="text" th:field="*{name}" name="name" class="form-control" id="name"
-                       placeholder="Lesson Name">
-            </div>
+                <div class="form-group">
+                    <label for="code">Lesson Code</label>
+                    <input type="text" th:field="*{code}" name="code" class="form-control" id="code"
+                           placeholder="Lesson Code">
+                </div>
+                <div class="form-group">
+                    <label for="code">Lesson description</label>
+                    <input type="text" th:field="*{description}" name="description" class="form-control"
+                           id="description"
+                           placeholder="Lesson description">
+                </div>
 
-            <div class="form-group">
-                <label for="code">Lesson Code</label>
-                <input type="text" th:field="*{code}" name="code" class="form-control" id="code"
-                       placeholder="Lesson Code">
-            </div>
-            <div class="form-group">
-                <label for="code">Lesson description</label>
-                <input type="text" th:field="*{description}" name="description" class="form-control" id="description"
-                       placeholder="Lesson description">
-            </div>
-
-            <div class="form-group">
-                <label for="content">Lesson content</label>
-                <!-- Thay textarea bằng div cho Quill editor -->
-                <div id="quill-editor" style="height: 200px;" th:utext="${lesson.content}"></div>
-                <!-- Hidden input for description content -->
-                <input type="hidden" th:field="*{content}" name="content" id="content">
-            </div>
-            <div class="d-flex justify-content-end mt-2">
-                <button type="submit" class="btn btn-primary mx-3">Update</button>
-                <a th:href="@{/courses/{courseId}(courseId=${course.courseId})}" class="btn btn-secondary">Back </a>
-            </div>
+                <div class="form-group">
+                    <label for="content">Lesson content</label>
+                    <!-- Thay textarea bằng div cho Quill editor -->
+                    <div id="quill-editor" style="height: 200px;" th:utext="${lesson.content}"></div>
+                    <!-- Hidden input for description content -->
+                    <input type="hidden" th:field="*{content}" name="content" id="content">
+                </div>
+                <div class="d-flex justify-content-end mt-2">
+                    <button type="submit" class="btn btn-primary mx-3">Update</button>
+                    <a th:href="@{/courses/{courseId}(courseId=${course.courseId})}" class="btn btn-secondary">Back </a>
+                </div>
 
 
-        </form>
-        <a th:href="@{/courses/{coursesId}/lessons/{lessonId}/add-question(coursesId=${course.courseId}, lessonId=${lesson.id})}">Add question</a>
+            </form>
+            <a th:href="@{/courses/{coursesId}/lessons/{lessonId}/add-question(coursesId=${course.courseId}, lessonId=${lesson.id})}">Add
+                question</a>
+        </div>
+<!--        <div th:if="${!isAdmin}">-->
+<!--            <div class="form-group">-->
+<!--                <label for="name">Lesson Name</label>-->
+<!--                <p id="name" class="form-control-plaintext" th:text="${lesson.name}">[Lesson Name]</p>-->
+<!--            </div>-->
+
+<!--            <div class="form-group">-->
+<!--                <label for="code">Lesson Code</label>-->
+<!--                <p id="code" class="form-control-plaintext" th:text="${lesson.code}">[Lesson Code]</p>-->
+<!--            </div>-->
+
+<!--            <div class="form-group">-->
+<!--                <label for="description">Lesson description</label>-->
+<!--                <p id="description" class="form-control-plaintext" th:text="${lesson.description}">[Lesson Description]</p>-->
+<!--            </div>-->
+
+<!--            <div class="form-group">-->
+<!--                <label for="content">Lesson content</label>-->
+<!--                <div class="form-control-plaintext content-box" style="height: 200px; overflow-y: auto;" th:utext="${lesson.content}">[Lesson Content]</div>-->
+<!--            </div>-->
+
+<!--            <div class="d-flex justify-content-end mt-2">-->
+<!--                <a th:href="@{/courses/{courseId}(courseId=${course.courseId})}" class="btn btn-secondary">Back</a>-->
+<!--            </div>-->
+
+<!--        </div>-->
     </div>
 
-    <script th:inline="javascript">
+
+    <div>
+        <h2>Questions</h2>
+        <form th:action="@{/courses/{courseId}/lessons/{lessonId}/checkAnswers(courseId=${course.courseId}, lessonId=${lesson.id})}" method="post">
+            <!-- Hiển thị thông báo tại đây -->
+
+            <div th:each="question, questionStat : ${questions}">
+                <p th:text="${questionStat.count} + '. ' + ${question.content}"></p>
+                <div th:each="option : ${question.options}">
+                    <input type="radio" th:name="|answer_${question.id}|" th:value="${option.id}" />
+                    <label th:text="${option.content}"></label>
+                </div>
+                <div th:if="${notification}" th:text="${notification}"></div>
+
+            </div>
+
+            <button type="submit">Check Answers</button>
+        </form>
+    </div>
+
+
+    <script th:if="${isAdmin}" th:inline="javascript">
         var successMessage = /*[[${success}]]*/ null;
     </script>
-    <script src="/js/notify/success.js"></script>
+    <script th:if="${isAdmin}" src="/js/notify/success.js"></script>
     <!-- Thêm Quill JavaScript -->
-    <script>
-
+    <script th:if="${isAdmin}">
         var quill = new Quill('#quill-editor', {     // Khởi tạo trình soạn thảo Quill bằng jQuery
             theme: 'snow'
         });

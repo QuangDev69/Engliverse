@@ -17,8 +17,9 @@ public class Option {
     @Column(nullable = false)
     private Boolean isCorrect;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionId", nullable = false)
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
     // Getters and setters
