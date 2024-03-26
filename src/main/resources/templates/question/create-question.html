@@ -2,49 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout.html}">
 <head>
     <title>Add Question</title>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        $(document).ready(function () {
-            var optionsIndex = 0; // Bắt đầu từ 0 vì không có Option mặc định nào
-
-            $('#addOption').click(function () {
-                var newOption = '<div id="option' + optionsIndex + '">' +
-                    '<input type="text" name="options[' + optionsIndex + '].content" required/>' +
-                    // Thêm checkbox isCorrect
-                    '<input type="checkbox" name="options[' + optionsIndex + '].isCorrect" value="true"/>' + ' Is Correct?' +
-                    // Thêm input hidden với cùng tên để gửi giá trị false khi checkbox không được chọn
-                    '<input type="hidden" name="options[' + optionsIndex + '].isCorrect" value="false"/>' +
-                    '<button type="button" onclick="removeOption(' + optionsIndex + ')">Remove</button>' +
-                    '</div>';
-                $('#optionsContainer').append(newOption);
-                optionsIndex++;
-            });
-        });
-
-        function removeOption(index) {
-            $('#option' + index).remove();
-            // Cân nhắc giảm optionsIndex nếu cần
-        }
-
-        /*]]>*/
-    </script>
-</head>
+=</head>
 <body>
-<div layout:fragment="content">
+<div layout:fragment="content" class="container mt-4">
     <h2>Add New Question</h2>
-    <!-- HTML form trong question/create-question.html -->
     <form th:action="@{/courses/{courseId}/lessons/{lessonId}/add-question(courseId=${course.courseId}, lessonId=${lesson.id})}" th:object="${question}" method="post">
-        <div>
-            <label for="content">Question:</label>
-            <input type="text" id="content" name="content" th:value="*{content}" required/>
+        <div class="mb-3">
+            <label for="content" class="form-label">Question:</label>
+            <input type="text" id="content" name="content" th:value="*{content}" required class="form-control"/>
         </div>
         <div id="optionsContainer">
             <!-- Options sẽ được thêm vào đây thông qua JavaScript -->
         </div>
-        <button type="button" id="addOption">Add Option</button>
-        <button type="submit">Submit</button>
+        <div class="mb-3">
+            <button type="button" id="addOption" class="btn btn-primary">Add Option</button>
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
     </form>
+    <script th:src="@{/js/question/create-question.js}"></script>
 
 </div>
 </body>
