@@ -5,8 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Lesson</title>
-    <!-- Thêm Quill CSS -->
-
 </head>
 <body>
 <div layout:fragment="content" class="container mt-4">
@@ -15,7 +13,7 @@
         <h2>Edit Lesson for: <span th:text="${course.courseName}"></span></h2>
         <div th:if="${isAdmin}">
             <form th:action="@{/courses/{courseId}/lessons/{lessonId}(courseId=${course.courseId}, lessonId=${lesson.id})}"
-                  th:object="${lesson}" method="post" class="mt-4">
+                  th:object="${lesson}" method="post" class="mt-4" id="update-lesson-form">
                 <div class="form-group">
                     <label for="name">Lesson Name</label>
                     <input type="text" th:field="*{name}" name="name" class="form-control" id="name"
@@ -46,43 +44,78 @@
                     <a th:href="@{/courses/{courseId}(courseId=${course.courseId})}" class="btn btn-secondary">Back </a>
                 </div>
 
-
             </form>
             <a th:href="@{/courses/{coursesId}/lessons/{lessonId}/add-question(coursesId=${course.courseId}, lessonId=${lesson.id})}">Add
                 question</a>
         </div>
-        <!--        <div th:if="${!isAdmin}">-->
-        <!--            <div class="form-group">-->
-        <!--                <label for="name">Lesson Name</label>-->
-        <!--                <p id="name" class="form-control-plaintext" th:text="${lesson.name}">[Lesson Name]</p>-->
-        <!--            </div>-->
-
-        <!--            <div class="form-group">-->
-        <!--                <label for="code">Lesson Code</label>-->
-        <!--                <p id="code" class="form-control-plaintext" th:text="${lesson.code}">[Lesson Code]</p>-->
-        <!--            </div>-->
-
-        <!--            <div class="form-group">-->
-        <!--                <label for="description">Lesson description</label>-->
-        <!--                <p id="description" class="form-control-plaintext" th:text="${lesson.description}">[Lesson Description]</p>-->
-        <!--            </div>-->
-
-        <!--            <div class="form-group">-->
-        <!--                <label for="content">Lesson content</label>-->
-        <!--                <div class="form-control-plaintext content-box" style="height: 200px; overflow-y: auto;" th:utext="${lesson.content}">[Lesson Content]</div>-->
-        <!--            </div>-->
-
-        <!--            <div class="d-flex justify-content-end mt-2">-->
-        <!--                <a th:href="@{/courses/{courseId}(courseId=${course.courseId})}" class="btn btn-secondary">Back</a>-->
-        <!--            </div>-->
-
-        <!--        </div>-->
     </div>
 
 
-    <div class="container mt-5 mb-3 ">
+    <div th:if="${isAdmin}" class="container mt-5 mb-3">
+        <h2 class="mb-3">Questions List</h2>
+        <ul class="list-group">
+            <li th:each="question, questionStat : ${questions}"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <span th:text="'Question ' + ${questionStat.count} + ': ' + ${question.content}"></span>
+                <button type="button" class="btn btn-primary edit-btn" th:data-question-id="${question.id}">
+                    Edit
+                </button>
+
+            </li>
+        </ul>
+    </div>
+
+    <!-- Modal Structure -->
+    <div th:each="question : ${questions}" class="modal fade"
+         th:id="'editQuestionModal' + ${question.id}" tabindex="-1" role="dialog"
+         aria-labelledby="editQuestionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editQuestionModalLabel">Edit Question</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form th:action="@{/courses/{courseId}/lessons/{lessonId}/update/{questionId}(courseId=${course.courseId}, lessonId=${lesson.id}, questionId=${question.id})}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Question:</label>
+                            <input type="text" id="content" name="content" th:value="${question.content}" class="form-control"/>
+                        </div>
+                        <label class="form-label">Options:</label>
+                        <div th:each="option, optionStat : ${question.options}">
+                            <div class="mb-3">
+                                <input type="hidden" th:name="${'options[' + optionStat.index + '].isCorrect'}" th:value="${option.isCorrect}"/>
+
+                                <input type="text" th:id="${'answer_' + question.id + '_' + option.id}" th:name="${'options[' + optionStat.index + '].content'}" th:value="${option.content}" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="formClose" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+            $('.edit-btn').click(function () {
+                var questionId = $(this).data('question-id');
+                $('#editQuestionModal' + questionId).modal('show');
+            });
+        });
+    </script>
+
+    <div th:if="${!isAdmin}" class="container mt-5 mb-3 ">
         <h2 class="mb-3">Questions</h2>
-        <form th:action="@{/courses/{courseId}/lessons/{lessonId}/checkAnswers(courseId=${course.courseId}, lessonId=${lesson.id})}"
+        <form id="checkAnswersForm"
+              th:action="@{/courses/{courseId}/lessons/{lessonId}/checkAnswers(courseId=${course.courseId}, lessonId=${lesson.id})}"
               method="post">
             <div class="row">
                 <div th:each="question, questionStat : ${questions}" class="col-md-6 mb-4">
@@ -98,9 +131,11 @@
                                 <label class="form-check-label" th:for="${'answer_' + question.id + '_' + option.id}"
                                        th:text="${option.content}"></label>
                             </div>
-                            <div th:class="${results?.get(question.id) != null ? (results[question.id] ? 'text-success' : 'text-danger') : ''}"
+                            <div id="feedback_${question.id}"
+                                 th:class="${results?.get(question.id) != null ? (results[question.id] ? 'text-success' : 'text-danger') : ''}"
                                  th:text="${results?.get(question.id) != null ? (results[question.id] ? 'Correct' : 'Wrong') : ''}">
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -113,27 +148,75 @@
         </form>
     </div>
 
-
     <script th:if="${isAdmin}" th:inline="javascript">
         var successMessage = /*[[${success}]]*/ null;
     </script>
     <script th:if="${isAdmin}" src="/js/notify/success.js"></script>
     <!-- Thêm Quill JavaScript -->
     <script th:if="${isAdmin}">
-        var quill = new Quill('#quill-editor', {     // Khởi tạo trình soạn thảo Quill bằng jQuery
+        var quill = new Quill('#quill-editor', {
             theme: 'snow'
         });
 
-        $('form').submit(function (event) {              // Sử dụng jQuery để lắng nghe sự kiện submit của biểu mẫu
-
-            event.preventDefault();                     // Ngăn chặn hành vi mặc định của sự kiện submit
-            var content = $('input[name=content]');     // Lấy nội dung của trình soạn thảo Quill bằng jQuery
-            content.val(quill.root.innerHTML);          // Gán nội dung từ Quill vào trường input ẩn
-            this.submit();                                  // Tiến hành gửi biểu mẫu nếu cần
+        $('#update-lesson-form').submit(function (event) {
+            event.preventDefault();
+            var content = $('input[name=content]');
+            content.val(quill.root.innerHTML);
+            this.submit();
         });
+        $(document).ready(function(){
+            $("#formClose, .btn-secondary").click(function(){
+                $("#editQuestionModal").modal('hide');
+
+            });
+
+        });
+
+
     </script>
 
 
+    <!--    <script>-->
+    <!--        $(document).ready(function() {-->
+    <!--            console.log("Document ready!");-->
+
+    <!--            // Cập nhật: Thêm logic Quill vào đây để ngăn chặn việc gửi form mặc định-->
+    <!--            var quillEditor = new Quill('#quill-editor', {-->
+    <!--                theme: 'snow'-->
+    <!--            });-->
+
+    <!--            $('#checkAnswersForm').submit(function(event) {-->
+    <!--                console.log("Form submit event triggered!");-->
+    <!--                event.preventDefault(); // Ngăn chặn hành vi mặc định-->
+
+    <!--                // Lấy nội dung từ Quill editor và cập nhật vào trường input ẩn-->
+    <!--                var content = $('#content');-->
+    <!--                content.val(quillEditor.root.innerHTML);-->
+
+    <!--                var form = $(this);-->
+    <!--                var url = form.attr('action'); // Kiểm tra xem URL có đúng không-->
+
+    <!--                $.ajax({-->
+    <!--                    type: 'POST',-->
+    <!--                    url: url,-->
+    <!--                    data: form.serialize(),-->
+    <!--                    success: function(response) {-->
+    <!--                        console.log('AJAX submission succeeded:', response);-->
+    <!--                        // Cập nhật UI tại đây dựa trên phản hồi-->
+    <!--                        $.each(response.results, function(questionId, isCorrect) {-->
+    <!--                            var feedbackText = isCorrect ? 'Correct' : 'Wrong';-->
+    <!--                            var feedbackClass = isCorrect ? 'text-success' : 'text-danger';-->
+    <!--                            // Cập nhật feedback cho câu hỏi tương ứng-->
+    <!--                            $('#feedback_' + questionId).text(feedbackText).removeClass('text-success text-danger').addClass(feedbackClass);-->
+    <!--                        });-->
+    <!--                    },-->
+    <!--                    error: function(xhr, status, error) {-->
+    <!--                        console.error('AJAX submission failed:', error);-->
+    <!--                    }-->
+    <!--                });-->
+    <!--            });-->
+    <!--        });-->
+    <!--    </script>-->
 
 
 </div>

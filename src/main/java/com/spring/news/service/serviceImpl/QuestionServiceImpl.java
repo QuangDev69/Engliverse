@@ -53,6 +53,41 @@ public class QuestionServiceImpl implements QuestionService {
         return option != null && option.getIsCorrect() && option.getQuestion().getId().equals(questionId);
     }
 
+    @Override
+    public Question getQuestionById( Integer questionId) {
+        return questionRepository.findById(questionId).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public Question updateQuestionById(Question question, Integer questionId) {
+        // Kiểm tra xem câu hỏi có tồn tại trong cơ sở dữ liệu hay không
+        Question questionExist = questionRepository.findById(questionId).orElse(null);
+        if (questionExist == null) {
+            throw new RuntimeException("Question with id " + questionId + " not found.");
+        }
+
+        // Cập nhật nội dung của câu hỏi
+        questionExist.setContent(question.getContent());
+
+        // Kiểm tra xem người dùng đã cập nhật tùy chọn mới nào không
+        List<Option> updatedOptions = new ArrayList<>();
+        for (Option option : question.getOptions()) {
+            // Nếu tùy chọn không có ID (tùy chọn mới được thêm), hoặc nếu ID của tùy chọn không trùng khớp với danh sách tùy chọn hiện có
+            if (option.getId() == null || !questionExist.getOptions().contains(option)) {
+                option.setQuestion(questionExist); // Liên kết option với question
+                updatedOptions.add(option);
+            }
+        }
+
+        // Nếu có tùy chọn mới, cập nhật danh sách tùy chọn của câu hỏi
+        if (!updatedOptions.isEmpty()) {
+            questionExist.getOptions().addAll(updatedOptions);
+        }
+
+        // Lưu và trả về câu hỏi đã được cập nhật
+        return questionRepository.save(questionExist);
+    }
 
 
 

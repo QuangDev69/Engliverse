@@ -23,11 +23,13 @@
 <body>
 
 <div class="wrapper ">
-    <div th:replace="layout/header :: header"></div>
+    <div th:replace="~{layout/header :: header}"></div>
     <div layout:fragment="content">
     </div>
 </div>
-<footer th:replace="layout/footer :: footer" ></footer>
+<!--<footer th:replace="layout/footer :: footer" ></footer>-->
+<footer th:replace="~{layout/footer :: footer}"></footer>
+
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
 </body>

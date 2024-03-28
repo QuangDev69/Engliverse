@@ -98,7 +98,47 @@ public class QuestionController {
 //    }
 
 
+    @PostMapping("/checkAnswers")
+    @ResponseBody
+    public Map<String, Object> checkAnswersAjax(@PathVariable("courseId") Integer courseId,
+                                                @PathVariable("lessonId") Integer lessonId,
+                                                @RequestParam Map<String, String> allParams) {
+        Lesson lesson = lessonService.getLessonById(lessonId);
+        List<Question> questions = questionService.getQuestionsByLessonId(lessonId);
+        Map<String, Boolean> results = new HashMap<>();
+        Map<String, String> userAnswers = new HashMap<>();
 
+        for (Question question : questions) {
+            String answerParam = "answer_" + question.getId();
+            Integer selectedOptionId = Integer.parseInt(allParams.getOrDefault(answerParam, "0"));
+            boolean isCorrect = question.getOptions().stream()
+                    .filter(Option::getIsCorrect)
+                    .anyMatch(option -> option.getId().equals(selectedOptionId));
+            results.put(String.valueOf(question.getId()), isCorrect);
+            userAnswers.put(answerParam, selectedOptionId.toString());
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", results);
+        response.put("userAnswers", userAnswers);
+        return response;
+    }
+
+
+    @PostMapping("/update/{questionId}")
+    public String updateQuestion(@PathVariable Long courseId,
+                                 @PathVariable Long lessonId,
+                                 @PathVariable Integer questionId,
+                                 @ModelAttribute Question question,
+                                 RedirectAttributes redirectAttributes) {
+        // Gọi phương thức cập nhật câu hỏi từ service
+         questionService.updateQuestionById(question, questionId);
+
+        // Thêm thông báo thành công vào redirect attributes
+        redirectAttributes.addFlashAttribute("successMessage", "Question updated successfully");
+
+        // Redirect người dùng đến trang chi tiết hoặc trang danh sách câu hỏi
+        return "redirect:/courses/" + courseId + "/lessons/" + lessonId;
+    }
 
 
     @GetMapping("/resetLesson")
