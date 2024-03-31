@@ -14,4 +14,6 @@ public interface QuestionService {
 
     Question getQuestionById ( Integer questionId);
 
+    void deleteQuestionById(Integer questionId);
+
 }

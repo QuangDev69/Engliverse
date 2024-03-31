@@ -130,13 +130,9 @@ public class QuestionController {
                                  @PathVariable Integer questionId,
                                  @ModelAttribute Question question,
                                  RedirectAttributes redirectAttributes) {
-        // Gọi phương thức cập nhật câu hỏi từ service
+
          questionService.updateQuestionById(question, questionId);
-
-        // Thêm thông báo thành công vào redirect attributes
         redirectAttributes.addFlashAttribute("successMessage", "Question updated successfully");
-
-        // Redirect người dùng đến trang chi tiết hoặc trang danh sách câu hỏi
         return "redirect:/courses/" + courseId + "/lessons/" + lessonId;
     }
 
@@ -146,6 +142,14 @@ public class QuestionController {
                               @PathVariable("lessonId") Integer lessonId, Model model) {
 
         return String.format("redirect:/courses/%d/lessons/%d", courseId, lessonId);
+    }
+
+    @PostMapping("/deleteQuestion/{questionId}")
+    public String deleteQuestionById(@PathVariable Integer questionId,
+                                   @PathVariable("courseId") Integer courseId,
+                                   @PathVariable("lessonId") Integer lessonId){
+         questionService.deleteQuestionById(questionId);
+         return String.format("redirect:/courses/%d/lessons/%d", courseId, lessonId);
     }
 
 

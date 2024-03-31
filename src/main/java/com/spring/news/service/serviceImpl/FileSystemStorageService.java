@@ -19,8 +19,8 @@ public class FileSystemStorageService implements FileStorageService {
             return null;
         }
         try {
-              Path uploadDirectory = Paths.get("D:/eng/image"); // Hoặc cấu hình đường dẫn thông qua application.properties
-            //    Path uploadDirectory = Paths.get("/Users/admin/Documents/eng/image/"); // Hoặc cấu hình đường dẫn thông qua application.properties
+            //    Path uploadDirectory = Paths.get("D:/eng/image"); // Hoặc cấu hình đường dẫn thông qua application.properties
+            Path uploadDirectory = Paths.get("/Users/admin/Documents/eng/image/"); // Hoặc cấu hình đường dẫn thông qua application.properties
             Path filePath = uploadDirectory.resolve(file.getOriginalFilename());
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             return file.getOriginalFilename();
